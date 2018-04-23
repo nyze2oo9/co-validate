@@ -8,7 +8,12 @@
         "suppressImplicitAnyIndexErrors": true,
         "declaration": true,
         "strict": true,
-        "outDir": "dist"
+        "strictPropertyInitialization": false,
+        "outDir": "dist",
+        "lib": [
+          "es2017",
+          "dom"
+      ]
     },
     "include": [
         "src/**/*"
