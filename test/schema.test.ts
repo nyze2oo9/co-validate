@@ -8,7 +8,6 @@ describe('Validation works', () => {
       test1: {
         nested: {
           test2: {
-            type: 'string',
             nested: {
               test3: {
                 type: 'string',
