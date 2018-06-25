@@ -1,6 +1,6 @@
 import * as chai from 'chai';
-import { Schema } from '../src/schema';
-import { SchemaConfigEntry } from '../src/schema-config-entry';
+import { Schema } from '../src/entities/schema';
+import { SchemaConfigEntry } from '../src/entities/schema-config-entry';
 
 const expect = chai.expect;
 describe('Config validation works', () => {

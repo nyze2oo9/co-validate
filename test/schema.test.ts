@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Schema } from '../src/schema';
+import { Schema } from '../src/entities/schema';
 import { ISchemaConfigEntry } from '../src/interfaces/schema';
 
 describe('Validation works', () => {
@@ -25,7 +25,7 @@ describe('Validation works', () => {
     });
 
     const keys: string[] = [];
-    const pushKeysToArray = (key: string, value: ISchemaConfigEntry) => {
+    const pushKeysToArray = (key: string, value: ISchemaConfigEntry, fullPath: string[]) => {
       keys.push(key);
     };
 
