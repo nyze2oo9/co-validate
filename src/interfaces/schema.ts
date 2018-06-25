@@ -1,14 +1,24 @@
+import { SchemaConfigEntry } from "../entities/schema-config-entry";
+
 export interface ISchemaConfigEntry {
-  type?: Type | ITypeValueWithSpecificErrorMessage;
-  reg_exp?: string | RegExp | IStringValueWithSpecificErrorMessage |
-  IRegExpValueWithSpecificErrorMessage;
-  valid_values?: (boolean | number | string)[] | IArrayValueWithSpecificErrorMessage;
-  required?: boolean | IBooleanValueWithSpecificErrorMessage;
-  min?: number | INumberValueWithSpecificErrorMessage;
-  max?: number | INumberValueWithSpecificErrorMessage;
-  message?: string | IMessageEntry;
+  fullPath?: string[];
+  type?: type;
+  reg_exp?: reg_exp;
+  valid_values?: valid_values;
+  required?: required;
+  min?: min;
+  max?: max;
+  message?: message;
   nested?: ISchemaConfig;
 }
+
+export type type = Type | ITypeValueWithSpecificErrorMessage;
+export type reg_exp = RegExp | IRegExpValueWithSpecificErrorMessage;
+export type valid_values = (boolean | number | string)[] | IArrayValueWithSpecificErrorMessage;
+export type required = boolean | IBooleanValueWithSpecificErrorMessage;
+export type min = number | INumberValueWithSpecificErrorMessage;
+export type max = number | INumberValueWithSpecificErrorMessage;
+export type message = string | IMessageEntry;
 
 export type Type =
   'boolean'
@@ -24,8 +34,15 @@ export type Type =
   | 'mongo_id'
   | 'email';
 
+export type RegExpValue = RegExp;
+export type ValidValues = (boolean | number | string)[]
+
 export interface ISchemaConfig {
   [key: string]: ISchemaConfigEntry;
+}
+
+export interface ISchemaConfigValidated {
+  [key: string]: SchemaConfigEntry;
 }
 
 export interface IMessageEntry {
