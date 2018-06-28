@@ -3,6 +3,13 @@
         "tslint-config-airbnb"
     ],
     "rules": {
-      "allow-leading-underscore": true,
+      "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
+      "max-line-length": [
+        true, 
+       { 
+           "limit": 120, 
+           "ignore-pattern": "^import |RegExp" 
+       }
+   ]
     }
 }
