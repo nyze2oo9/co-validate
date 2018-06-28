@@ -24,8 +24,8 @@ describe('Config validation works', () => {
 
     schemaConfigEntry.nested = {
       test: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     };
 
     const errorFunction = () => {
@@ -54,9 +54,9 @@ describe('Config validation works', () => {
       schemaConfigEntry.type = {
         value: <any>'stirng',
         message: {
-          de: 'test'
-        }
-      }
+          de: 'test',
+        },
+      };
     };
 
     expect(errorFunction).to.throw(message);
@@ -77,12 +77,12 @@ describe('Config validation works', () => {
     const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.type = {
       value: 'string',
-      message: 'error message'
-    }
+      message: 'error message',
+    };
 
     expect(schemaConfigEntry.type).to.eql({
       value: 'string',
-      message: 'error message'
+      message: 'error message',
     });
     expect(schemaConfigEntry.typeValue).to.equal('string');
   });
@@ -141,8 +141,8 @@ describe('Config validation works', () => {
     const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.nested = {
       test: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     };
 
     const errorFunction = () => {
@@ -178,12 +178,12 @@ describe('Config validation works', () => {
     const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.regExp = {
       value: /ab+c/i,
-      message: 'error message'
-    }
+      message: 'error message',
+    };
 
     expect(schemaConfigEntry.regExp).to.eql({
       value: /ab+c/i,
-      message: 'error message'
+      message: 'error message',
     });
     expect(schemaConfigEntry.regExpValue).to.eql(/ab+c/i);
   });
@@ -254,8 +254,8 @@ describe('Config validation works', () => {
     const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.nested = {
       test: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     };
 
     const errorFunction = () => {
@@ -283,7 +283,7 @@ describe('Config validation works', () => {
     const errorFunction = () => {
       schemaConfigEntry.validValues = {
         value: <any>[1, 2, []],
-        message: 'error message'
+        message: 'error message',
       };
     };
 
@@ -293,12 +293,12 @@ describe('Config validation works', () => {
     const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.validValues = {
       value: [1, 2],
-      message: 'error message'
-    }
+      message: 'error message',
+    };
 
     expect(schemaConfigEntry.validValues).to.eql({
       value: [1, 2],
-      message: 'error message'
+      message: 'error message',
     });
     expect(schemaConfigEntry.validValuesValue).to.eql([1, 2]);
   });
@@ -321,11 +321,24 @@ describe('Config validation works', () => {
     const errorFunction = () => {
       schemaConfigEntry.required = {
         value: <any>1,
-        message: 'error message'
-      }
+        message: 'error message',
+      };
     };
 
     expect(errorFunction).to.throw(message);
+  });
+  it('should set required and requiredValue', () => {
+    const schemaConfigEntry = new SchemaConfigEntry();
+    schemaConfigEntry.required = {
+      value: true,
+      message: 'error message',
+    };
+
+    expect(schemaConfigEntry.required).to.eql({
+      value: true,
+      message: 'error message',
+    });
+    expect(schemaConfigEntry.requiredValue).to.eql(true);
   });
   it('should throw error when setting min with invalid type', () => {
     const message = 'Invalid type when usgin length properties';
@@ -379,8 +392,8 @@ describe('Config validation works', () => {
     const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.nested = {
       test: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     };
 
     const errorFunction = () => {
@@ -408,7 +421,7 @@ describe('Config validation works', () => {
     const errorFunction = () => {
       schemaConfigEntry.min = {
         value: <any>'test',
-        message: 'error message'
+        message: 'error message',
       };
     };
 
@@ -430,12 +443,12 @@ describe('Config validation works', () => {
     const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.min = {
       value: 1,
-      message: 'error message'
-    }
+      message: 'error message',
+    };
 
     expect(schemaConfigEntry.min).to.eql({
       value: 1,
-      message: 'error message'
+      message: 'error message',
     });
     expect(schemaConfigEntry.minValue).to.eql(1);
   });
@@ -491,8 +504,8 @@ describe('Config validation works', () => {
     const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.nested = {
       test: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     };
 
     const errorFunction = () => {
@@ -507,8 +520,8 @@ describe('Config validation works', () => {
     const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.nested = {
       test: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     };
 
     const errorFunction = () => {
@@ -537,7 +550,7 @@ describe('Config validation works', () => {
     const errorFunction = () => {
       schemaConfigEntry.max = {
         value: <any>'test',
-        message: 'error message'
+        message: 'error message',
       };
     };
 
@@ -547,12 +560,12 @@ describe('Config validation works', () => {
     const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.max = {
       value: 1,
-      message: 'error message'
-    }
+      message: 'error message',
+    };
 
     expect(schemaConfigEntry.max).to.eql({
       value: 1,
-      message: 'error message'
+      message: 'error message',
     });
     expect(schemaConfigEntry.maxValue).to.eql(1);
   });
@@ -562,7 +575,7 @@ describe('Config validation works', () => {
     const schemaConfigEntry = new SchemaConfigEntry();
 
     const errorFunction = () => {
-      schemaConfigEntry.message = <any>true
+      schemaConfigEntry.message = <any>true;
     };
 
     expect(errorFunction).to.throw(message);
@@ -575,8 +588,8 @@ describe('Config validation works', () => {
     const errorFunction = () => {
       schemaConfigEntry.message = {
         de: <any>1,
-        en: <any>2
-      }
+        en: <any>2,
+      };
     };
 
     expect(errorFunction).to.throw(message);
@@ -596,8 +609,8 @@ describe('Config validation works', () => {
     const errorFunction = () => {
       schemaConfigEntry.nested = {
         test: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       };
     };
 
@@ -612,8 +625,8 @@ describe('Config validation works', () => {
     const errorFunction = () => {
       schemaConfigEntry.nested = {
         test: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       };
     };
 
@@ -628,8 +641,8 @@ describe('Config validation works', () => {
     const errorFunction = () => {
       schemaConfigEntry.nested = {
         test: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       };
     };
 
@@ -644,8 +657,8 @@ describe('Config validation works', () => {
     const errorFunction = () => {
       schemaConfigEntry.nested = {
         test: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       };
     };
 
@@ -660,8 +673,8 @@ describe('Config validation works', () => {
     const errorFunction = () => {
       schemaConfigEntry.nested = {
         test: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       };
     };
 
@@ -677,8 +690,8 @@ describe('Config validation works', () => {
     const errorFunction = () => {
       schemaConfigEntry.nested = {
         test: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       };
     };
 
@@ -688,14 +701,14 @@ describe('Config validation works', () => {
     const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.nested = {
       test: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     };
 
     expect(schemaConfigEntry.nested).to.eql({
       test: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     });
   });
 });

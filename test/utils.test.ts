@@ -15,7 +15,7 @@ const utils = new Utils();
 
 describe('Utils', () => {
   it('should return true if the value is a plain object', () => {
-    const utilsToTest = new Utils(new Options({allowEmpty: true}))
+    const utilsToTest = new Utils(new Options({ allowEmpty: true }));
     expect(utilsToTest.isPlainObject({})).to.equal(true);
     expect(utils.isPlainObject({ test: 1 })).to.equal(true);
     expect(utilsToTest.isPlainObject(Object.create(null))).to.equal(true);
@@ -57,8 +57,8 @@ describe('Utils', () => {
       value: 'number',
       message: {
         de: 'test',
-        en: 'test'
-      }
+        en: 'test',
+      },
     })).to.equal(true);
   });
   it('should return false if the value isn‘t a valid type with message object', () => {
@@ -70,8 +70,8 @@ describe('Utils', () => {
       value: 'stirng',
       message: {
         de: 'test',
-        en: 'test'
-      }
+        en: 'test',
+      },
     })).to.equal(false);
     expect(utils.isTypeWithSpecificErrorMessage({})).to.equal(false);
   });
@@ -107,33 +107,33 @@ describe('Utils', () => {
     expect(utils.isMessage('message')).to.equal(true);
     expect(utils.isMessage({
       de: 'german message',
-      en: 'english message'
+      en: 'english message',
     })).to.equal(true);
   });
   it('should return true if value is a min/max value with error message', () => {
     expect(utils.isMinOrMaxWithSpecificErrorMessage({
       value: 1,
-      message: 'message'
+      message: 'message',
     })).to.equal(true);
     expect(utils.isMinOrMaxWithSpecificErrorMessage({
       value: 1,
       message: {
         de: 'german message',
-        en: 'english message'
-      }
+        en: 'english message',
+      },
     })).to.equal(true);
   });
   it('should return false if value is not a min/max value with error message', () => {
     expect(utils.isMinOrMaxWithSpecificErrorMessage({
       value: true,
-      message: 'message'
+      message: 'message',
     })).to.equal(false);
     expect(utils.isMinOrMaxWithSpecificErrorMessage({
       value: 'test',
       message: {
         de: 'german message',
-        en: 'english message'
-      }
+        en: 'english message',
+      },
     })).to.equal(false);
     expect(utils.isMinOrMaxWithSpecificErrorMessage({})).to.equal(false);
   });
@@ -147,78 +147,77 @@ describe('Utils', () => {
   it('should return true if value is a required value with error message', () => {
     expect(utils.isRequiredWithSpecificErrorMessage({
       value: true,
-      message: 'message'
+      message: 'message',
     })).to.equal(true);
     expect(utils.isRequiredWithSpecificErrorMessage({
       value: false,
       message: {
         de: 'german message',
-        en: 'english message'
-      }
+        en: 'english message',
+      },
     })).to.equal(true);
   });
   it('should return false if value is not a required value with error message', () => {
     expect(utils.isRequiredWithSpecificErrorMessage({
       value: 1,
-      message: 'message'
+      message: 'message',
     })).to.equal(false);
     expect(utils.isRequiredWithSpecificErrorMessage({
       value: 'test',
       message: {
         de: 'german message',
-        en: 'english message'
-      }
+        en: 'english message',
+      },
     })).to.equal(false);
     expect(utils.isRequiredWithSpecificErrorMessage({})).to.equal(false);
   });
   it('should return true if value is a valid valid_values array', () => {
-    expect(utils.isValidValuesArray([1,2,3])).to.equal(true);
-    expect(utils.isValidValuesArray(['test','test2','test3'])).to.equal(true);
+    expect(utils.isValidValuesArray([1, 2, 3])).to.equal(true);
+    expect(utils.isValidValuesArray(['test', 'test2', 'test3'])).to.equal(true);
     expect(utils.isValidValuesArray([true])).to.equal(true);
-    expect(utils.isValidValuesArray([true,1,'test'])).to.equal(true);
+    expect(utils.isValidValuesArray([true, 1, 'test'])).to.equal(true);
   });
   it('should return false if value isn\'t a valid valid_values array', () => {
     expect(utils.isValidValuesArray(true)).to.equal(false);
-    //expect(utils.isValidValuesArray(undefined)).to.equal(false);
+    // expect(utils.isValidValuesArray(undefined)).to.equal(false);
     expect(utils.isValidValuesArray({})).to.equal(false);
-    expect(utils.isValidValuesArray([true,1,'test', {}])).to.equal(false);
+    expect(utils.isValidValuesArray([true, 1, 'test', {}])).to.equal(false);
   });
   it('should return true if value is a valid_value value with error message', () => {
     expect(utils.isValidValuesWithSpecificErrorMessage({
-      value: [true,1,'a'],
-      message: 'message'
+      value: [true, 1, 'a'],
+      message: 'message',
     })).to.equal(true);
     expect(utils.isValidValuesWithSpecificErrorMessage({
-      value: [true,1,'a'],
+      value: [true, 1, 'a'],
       message: {
         de: 'german message',
-        en: 'english message'
-      }
+        en: 'english message',
+      },
     })).to.equal(true);
   });
   it('should return false if value is not a valid_value value with error message', () => {
     expect(utils.isValidValuesWithSpecificErrorMessage({
-      value: [true,1,'test', {}],
-      message: 'message'
+      value: [true, 1, 'test', {}],
+      message: 'message',
     })).to.equal(false);
     expect(utils.isValidValuesWithSpecificErrorMessage({
       value: 'test',
       message: {
         de: 'german message',
-        en: 'english message'
-      }
+        en: 'english message',
+      },
     })).to.equal(false);
-    //expect(utils.isValidValuesWithSpecificErrorMessage({})).to.equal(false);
+    // expect(utils.isValidValuesWithSpecificErrorMessage({})).to.equal(false);
   });
   it('should return true if value is an array', () => {
-    const utilsToTest = new Utils(new Options({allowEmpty: true}))
+    const utilsToTest = new Utils(new Options({ allowEmpty: true }));
     expect(utilsToTest.isArray([])).to.equal(true);
-    expect(utilsToTest.isArray(new Array())).to.equal(true);
-    expect(utils.isArray([1,'test'])).to.equal(true);
+    expect(utils.isArray([1, 'test'])).to.equal(true);
   });
   it('should return false if value is an empty array', () => {
     expect(utils.isArray([])).to.equal(false);
-    expect(utils.isArray(new Array())).to.equal(false);
+    expect(utils.isArray([])).to.equal(false);
   });
   it('should return false if value isn\'t an array', () => {
     expect(utils.isArray({})).to.equal(false);
@@ -258,74 +257,74 @@ describe('Utils', () => {
   it('should return true if value is a regexp value with error message', () => {
     expect(utils.isRegExpWithSpecificErrorMessage({
       value: /ab+c/i,
-      message: 'message'
+      message: 'message',
     })).to.equal(true);
     expect(utils.isRegExpWithSpecificErrorMessage({
       value: /ab+c/i,
       message: {
         de: 'german message',
-        en: 'english message'
-      }
+        en: 'english message',
+      },
     })).to.equal(true);
   });
   it('should return false if value is not a regexp value with error message', () => {
     expect(utils.isRegExpWithSpecificErrorMessage({
       value: '/ab+c/i',
-      message: 'message'
+      message: 'message',
     })).to.equal(false);
     expect(utils.isRegExpWithSpecificErrorMessage({
       value: '/ab+c/i',
       message: {
         de: 'german message',
-        en: 'english message'
-      }
+        en: 'english message',
+      },
     })).to.equal(false);
-    //expect(utils.isValidValuesWithSpecificErrorMessage({})).to.equal(false);
+    // expect(utils.isValidValuesWithSpecificErrorMessage({})).to.equal(false);
   });
-  it('should return true if value is set', () => {
-    expect(utils.isSet(false)).to.equal(true);
+  it('should return false if value is set', () => {
+    expect(utils.isNil(false)).to.equal(false);
   });
-  it('should return false if value isn\'t set', () => {
-    expect(utils.isSet(undefined)).to.equal(false);
+  it('should return true if value isn\'t set', () => {
+    expect(utils.isNil(undefined)).to.equal(true);
   });
   it('should return rest when navigate thru path', () => {
     const testObject = {
       test1: {
         test2: {
-          test3: 'test'
-        }
-      }
-    }
-    const testPath = ['test1', 'test2', 'test3']
+          test3: 'test',
+        },
+      },
+    };
+    const testPath = ['test1', 'test2', 'test3'];
     expect(utils.getValue(testPath, testObject)).to.equal('test');
   });
   it('should return true if it\'s not NaN and allowNaN is false', () => {
     expect(utils.checkNaNBasedOnOptions(1)).to.equal(true);
-  }); 
+  });
   it('should return true if it\'s not NaN and allowNaN is true', () => {
-    const utilsToTest = new Utils(new Options({allowNaN: true}))
+    const utilsToTest = new Utils(new Options({ allowNaN: true }));
     expect(utilsToTest.checkNaNBasedOnOptions(1)).to.equal(true);
   });
   it('should return false if NaN is set and allowNaN is false', () => {
     expect(utils.checkNaNBasedOnOptions(NaN)).to.equal(false);
-  }); 
+  });
   it('should return true if NaN is set and allowNaN is true', () => {
-    const utilsToTest = new Utils(new Options({allowNaN: true}))
+    const utilsToTest = new Utils(new Options({ allowNaN: true }));
     expect(utilsToTest.checkNaNBasedOnOptions(NaN)).to.equal(true);
   });
   it('should return true if it\'s not Infinite and allowInfinite is false', () => {
     expect(utils.checkInfiteBasedOnOptions(1)).to.equal(true);
-  }); 
+  });
   it('should return true if it\'s not Infinite and allowInfinite is true', () => {
-    const utilsToTest = new Utils(new Options({allowInfinite: true}))
+    const utilsToTest = new Utils(new Options({ allowInfinite: true }));
     expect(utilsToTest.checkInfiteBasedOnOptions(1)).to.equal(true);
   });
   it('should return false if Infinite is set and allowInfinite is false', () => {
     expect(utils.checkInfiteBasedOnOptions(Number.POSITIVE_INFINITY)).to.equal(false);
     expect(utils.checkInfiteBasedOnOptions(Number.NEGATIVE_INFINITY)).to.equal(false);
-  }); 
+  });
   it('should return true if Infinite is set and allowInfinite is true', () => {
-    const utilsToTest = new Utils(new Options({allowInfinite: true}))
+    const utilsToTest = new Utils(new Options({ allowInfinite: true }));
     expect(utilsToTest.checkInfiteBasedOnOptions(Number.POSITIVE_INFINITY)).to.equal(true);
     expect(utilsToTest.checkInfiteBasedOnOptions(Number.NEGATIVE_INFINITY)).to.equal(true);
   });
@@ -333,7 +332,7 @@ describe('Utils', () => {
     expect(utils.isNumber(NaN)).to.equal(false);
   });
   it('should return true if value is NaN and AllowNaN is true', () => {
-    const utilsToTest = new Utils(new Options({allowNaN: true}))
+    const utilsToTest = new Utils(new Options({ allowNaN: true }));
     expect(utilsToTest.isNumber(NaN)).to.equal(true);
   });
   it('should return false if value is Infinite and allowInfinite is false', () => {
@@ -341,7 +340,7 @@ describe('Utils', () => {
     expect(utils.isNumber(Number.NEGATIVE_INFINITY)).to.equal(false);
   });
   it('should return false if value is Infinite and allowInfinite is false', () => {
-    const utilsToTest = new Utils(new Options({allowInfinite: true}))
+    const utilsToTest = new Utils(new Options({ allowInfinite: true }));
     expect(utilsToTest.isNumber(Number.POSITIVE_INFINITY)).to.equal(true);
     expect(utilsToTest.isNumber(Number.NEGATIVE_INFINITY)).to.equal(true);
   });
@@ -356,14 +355,103 @@ describe('Utils', () => {
     expect(utils.checkEmptyStringBasedOnOptions('')).to.equal(false);
   });
   it('should return true if value is an empty string and allowEmpty is true', () => {
-    const utilsToTest = new Utils(new Options({allowEmpty: true}))
+    const utilsToTest = new Utils(new Options({ allowEmpty: true }));
     expect(utilsToTest.checkEmptyStringBasedOnOptions('')).to.equal(true);
   });
   it('should return false if value is an empty string and allowEmpty is false', () => {
     expect(utils.isString('')).to.equal(false);
   });
   it('should return true if value is an empty string and allowEmpty is true', () => {
-    const utilsToTest = new Utils(new Options({allowEmpty: true}))
+    const utilsToTest = new Utils(new Options({ allowEmpty: true }));
     expect(utilsToTest.isString('')).to.equal(true);
+  });
+  it('should return true if value matches a specific regExp', () => {
+    expect(utils.checkRegExp(/Hello/g, 'Hello World')).to.equal(true);
+  });
+  it('should return false if value isn\'t matching a specific regExp', () => {
+    expect(utils.checkRegExp(/Hello/g, 'Hell World')).to.equal(false);
+  });
+  it('should return true if value is included in a validValues Array', () => {
+    expect(utils.checkValidValue([1, 2], 1)).to.equal(true);
+  });
+  it('should return false if value isn\'t included in a validValues Array', () => {
+    expect(utils.checkValidValue([1, 2], 3)).to.equal(false);
+  });
+  it('should return true if value is required and set', () => {
+    expect(utils.checkRequired(true, 1)).to.equal(true);
+    expect(utils.checkRequired(false, undefined)).to.equal(true);
+  });
+  it('should return false if value is required but not set', () => {
+    expect(utils.checkRequired(true, undefined)).to.equal(false);
+  });
+  it('should return true if value is higher or equal then min', () => {
+    expect(utils.checkNumberLength({ min: 1 }, 1)).to.equal(true);
+    expect(utils.checkNumberLength({ min: 1 }, 2)).to.equal(true);
+  });
+  it('should return false if value is less then min', () => {
+    expect(utils.checkNumberLength({ min: 1 }, 0)).to.equal(false);
+  });
+  it('should return true if value is less or equal then max', () => {
+    expect(utils.checkNumberLength({ max: 2 }, 1)).to.equal(true);
+    expect(utils.checkNumberLength({ max: 2 }, 2)).to.equal(true);
+  });
+  it('should return false if value is higher then max', () => {
+    expect(utils.checkNumberLength({ max: 2 }, 3)).to.equal(false);
+  });
+  it('should return true if the length of the supplied string is longer or equal min', () => {
+    expect(utils.checkStringLength({ min: 1 }, 't')).to.equal(true);
+    expect(utils.checkStringLength({ min: 1 }, 'test')).to.equal(true);
+  });
+  it('should return false if the length of the supplied string isn\' longer or equal min', () => {
+    expect(utils.checkStringLength({ min: 5 }, 'test')).to.equal(false);
+  });
+  it('should return true if the length of the supplied string is less or equal max', () => {
+    expect(utils.checkStringLength({ max: 4 }, 'tes')).to.equal(true);
+    expect(utils.checkStringLength({ max: 4 }, 'test')).to.equal(true);
+  });
+  it('should return false if the length of the supplied string isn\'t less or equal max', () => {
+    expect(utils.checkStringLength({ max: 2 }, 'test')).to.equal(false);
+  });
+  it('should return true if the length of the supplied array is longer or equal min', () => {
+    expect(utils.checkArrayLength({ min: 1 }, [1])).to.equal(true);
+    expect(utils.checkArrayLength({ min: 1 }, [1, 2])).to.equal(true);
+  });
+  it('should return false if the length of the supplied array isn\' longer or equal min', () => {
+    expect(utils.checkArrayLength({ min: 5 }, [1, 2, 3, 4])).to.equal(false);
+  });
+  it('should return true if the length of the supplied array is less or equal max', () => {
+    expect(utils.checkArrayLength({ max: 4 }, [1, 2, 3])).to.equal(true);
+    expect(utils.checkArrayLength({ max: 4 }, [1, 2, 3, 4])).to.equal(true);
+  });
+  it('should return false if the length of the supplied array isn\'t less or equal max', () => {
+    expect(utils.checkArrayLength({ max: 2 }, [1, 2, 3, 4])).to.equal(false);
+  });
+  it('should return true if supplied parameter matched the interface IMaxObject', () => {
+    expect((<any>utils).instanceOfMaxObject({ max: 2 })).to.equal(true);
+  });
+  it('should return false if supplied parameter isn\'t matching the interface IMaxObject', () => {
+    expect((<any>utils).instanceOfMaxObject({ min: 2 })).to.equal(false);
+  });
+  it('should return true if supplied parameter matched the interface IMinObject', () => {
+    expect((<any>utils).instanceOfMinObject({ min: 2 })).to.equal(true);
+  });
+  it('should return false if supplied parameter isn\'t matching the interface IMinObject', () => {
+    expect((<any>utils).instanceOfMinObject({ max: 2 })).to.equal(false);
+  });
+  it('testing checkLengthProperty', () => {
+    expect((utils).checkLengthProperty({ min: 2 }, 2)).to.equal(true);
+    expect((utils).checkLengthProperty({ max: 2 }, 2)).to.equal(true);
+    expect((utils).checkLengthProperty({ min: 2 }, 1)).to.equal(false);
+    expect((utils).checkLengthProperty({ max: 2 }, 3)).to.equal(false);
+    expect((utils).checkLengthProperty({ min: 2 }, 'te')).to.equal(true);
+    expect((utils).checkLengthProperty({ max: 2 }, 'te')).to.equal(true);
+    expect((utils).checkLengthProperty({ min: 2 }, 't')).to.equal(false);
+    expect((utils).checkLengthProperty({ max: 2 }, 'tes')).to.equal(false);
+    expect((utils).checkLengthProperty({ min: 2 }, [1, 2])).to.equal(true);
+    expect((utils).checkLengthProperty({ max: 2 }, [1, 2])).to.equal(true);
+    expect((utils).checkLengthProperty({ min: 2 }, [1])).to.equal(false);
+    expect((utils).checkLengthProperty({ max: 2 }, [1, 2, 3])).to.equal(false);
+    expect((utils).checkLengthProperty({ min: 2 }, true)).to.equal(false);
+    expect((utils).checkLengthProperty({ max: 2 }, true)).to.equal(false);
   });
 });

@@ -2,7 +2,7 @@ import {
   Type, ITypeValueWithSpecificErrorMessage, IStringValueWithSpecificErrorMessage,
   IRegExpValueWithSpecificErrorMessage, IArrayValueWithSpecificErrorMessage,
   IBooleanValueWithSpecificErrorMessage, INumberValueWithSpecificErrorMessage,
-  IMessageEntry, ISchemaConfig, valid_values, type, reg_exp, required, min, max, message, RegExpValue, ValidValues,
+  IMessageEntry, ISchemaConfig, valid_values, type, reg_exp, required, min, max, RegExpValue, ValidValues, SchemaConfigEntryProperty, message,
 } from './../interfaces/schema';
 import { Utils } from './utils';
 
@@ -10,12 +10,12 @@ export class SchemaConfigEntry {
   private utils = new Utils();
 
   private _fullPath: string[];
-	public get fullPath(): string[] {
-		return this._fullPath;
-	}
-	public set fullPath(value: string[]) {
-		this._fullPath = value;
-	}
+  public get fullPath(): string[] {
+    return this._fullPath;
+  }
+  public set fullPath(value: string[]) {
+    this._fullPath = value;
+  }
 
   private _type?: type;
   public get type(): type | undefined {
@@ -32,8 +32,9 @@ export class SchemaConfigEntry {
       if (!this.utils.isType(value) && !this.utils.isTypeWithSpecificErrorMessage(value)) {
         throw new Error('type is invalid');
       }
-      const typeValue = this.utils.isTypeWithSpecificErrorMessage(value) ? (<ITypeValueWithSpecificErrorMessage>value).value : <Type>value;
-      if (this.utils.isSet(this.regExp)) {
+      const typeValue = this.utils.isTypeWithSpecificErrorMessage(value) ? 
+      (<ITypeValueWithSpecificErrorMessage>value).value : <Type>value;
+      if (!this.utils.isNil(this.regExp)) {
         if (typeValue !== 'string') {
           throw new Error('RegExp just can be tested on strings');
         }
@@ -58,20 +59,22 @@ export class SchemaConfigEntry {
       if (this.utils.areAllValuesSet(value, this.validValues)) {
         throw new Error('RegExp pattern and valid_values can\'t be set both');
       }
-      if (this.utils.areAllValuesSet(value, this.min, this.max) || this.utils.areAllValuesSet(value, this.min) || this.utils.areAllValuesSet(value, this.max)) {
+      if (this.utils.areAllValuesSet(value, this.min, this.max) || this.utils.areAllValuesSet(value, this.min) || 
+      this.utils.areAllValuesSet(value, this.max)) {
         throw new Error('RegExp and length properties can\'t be set both');
       }
       if (this.utils.areAllValuesSet(value, this.nested)) {
         throw new Error('RegExp and nested can\'t be set both');
       }
-      if (this.utils.isSet(this.typeValue) && this.typeValue !== 'string') {
+      if (!this.utils.isNil(this.typeValue) && this.typeValue !== 'string') {
         throw new Error('RegExp just can be tested on strings');
       }
       if (!this.utils.isRegExp(value) && !this.utils.isRegExpWithSpecificErrorMessage(value)) {
         throw new Error('RegExp pattern is invalid');
       }
       this._regExp = value;
-      this._regExpValue = this.utils.isRegExpWithSpecificErrorMessage(this._regExp) ? (<IRegExpValueWithSpecificErrorMessage>this._regExp).value : <RegExp>this._regExp;
+      this._regExpValue = this.utils.isRegExpWithSpecificErrorMessage(this._regExp) ? 
+      (<IRegExpValueWithSpecificErrorMessage>this._regExp).value : <RegExp>this._regExp;
     }
   }
 
@@ -94,7 +97,8 @@ export class SchemaConfigEntry {
       if (this.utils.areAllValuesSet(value, this.regExp)) {
         throw new Error('Valid_values and regExp pattern can\'t be set both');
       }
-      if (this.utils.areAllValuesSet(value, this.min, this.max) || this.utils.areAllValuesSet(value, this.min) || this.utils.areAllValuesSet(value, this.max)) {
+      if (this.utils.areAllValuesSet(value, this.min, this.max) || this.utils.areAllValuesSet(value, this.min) || 
+      this.utils.areAllValuesSet(value, this.max)) {
         throw new Error('Valid_values and length properties can\'t be set both');
       }
       if (this.utils.areAllValuesSet(value, this.nested)) {
@@ -104,7 +108,8 @@ export class SchemaConfigEntry {
         throw new Error('valid_values is invalid');
       }
       this._validValues = value;
-      this._validValuesValue = this.utils.isValidValuesWithSpecificErrorMessage(this._validValues) ? (<IArrayValueWithSpecificErrorMessage>this._validValues).value : <ValidValues>this._validValues;
+      this._validValuesValue = this.utils.isValidValuesWithSpecificErrorMessage(this._validValues) ? 
+      (<IArrayValueWithSpecificErrorMessage>this._validValues).value : <ValidValues>this._validValues;
     }
   }
 
@@ -125,7 +130,8 @@ export class SchemaConfigEntry {
         throw new Error('required is invalid');
       }
       this._required = value;
-      this._requiredValue = this.utils.isRequiredWithSpecificErrorMessage(this._required) ? (<IBooleanValueWithSpecificErrorMessage>this._required).value : <boolean>this._required;
+      this._requiredValue = this.utils.isRequiredWithSpecificErrorMessage(this._required) ? 
+      (<IBooleanValueWithSpecificErrorMessage>this._required).value : <boolean>this._required;
     }
   }
 
@@ -141,7 +147,7 @@ export class SchemaConfigEntry {
   }
   public set min(value: min | undefined) {
     if (value !== undefined) {
-      if (this.utils.isSet(this.typeValue) && !this.utils.isValidTypeWithLengthProperties(this.typeValue)) {
+      if (!this.utils.isNil(this.typeValue) && !this.utils.isValidTypeWithLengthProperties(this.typeValue)) {
         throw new Error('Invalid type when usgin length properties');
       }
       if (this.utils.areAllValuesSet(value, this.regExp)) {
@@ -156,12 +162,13 @@ export class SchemaConfigEntry {
       if (!this.utils.isInteger(value) && !this.utils.isMinOrMaxWithSpecificErrorMessage(value)) {
         throw new Error('min needs to be numbers');
       }
-      const minValue = this.utils.isMinOrMaxWithSpecificErrorMessage(value) ? (<INumberValueWithSpecificErrorMessage>value).value : <number>value;
+      const minValue = this.utils.isMinOrMaxWithSpecificErrorMessage(value) ? 
+      (<INumberValueWithSpecificErrorMessage>value).value : <number>value;
       if (minValue > this.maxValue) {
         throw new Error('min need to be lower than max');
       }
       this._min = value;
-      this._minValue = minValue
+      this._minValue = minValue;
     }
   }
 
@@ -176,7 +183,7 @@ export class SchemaConfigEntry {
   }
   public set max(value: max | undefined) {
     if (value !== undefined) {
-      if (this.utils.isSet(this.typeValue) && !this.utils.isValidTypeWithLengthProperties(this.typeValue)) {
+      if (!this.utils.isNil(this.typeValue) && !this.utils.isValidTypeWithLengthProperties(this.typeValue)) {
         throw new Error('Invalid type when usgin length properties');
       }
       if (this.utils.areAllValuesSet(value, this.regExp)) {
@@ -191,7 +198,8 @@ export class SchemaConfigEntry {
       if (!this.utils.isInteger(value) && !this.utils.isMinOrMaxWithSpecificErrorMessage(value)) {
         throw new Error('max needs to be numbers');
       }
-      const maxValue = this.utils.isMinOrMaxWithSpecificErrorMessage(value) ? (<INumberValueWithSpecificErrorMessage>value).value : <number>value;
+      const maxValue = this.utils.isMinOrMaxWithSpecificErrorMessage(value) ? 
+      (<INumberValueWithSpecificErrorMessage>value).value : <number>value;
       if (this.minValue > maxValue) {
         throw new Error('min need to be lower than max');
       }
@@ -235,11 +243,31 @@ export class SchemaConfigEntry {
       if (this.utils.areAllValuesSet(value, this.validValues)) {
         throw new Error('nested and validValues can\'t be set both');
       }
-      //@TODO how to specify lengths of arrays
-      if (this.utils.areAllValuesSet(value, this.min, this.max) || this.utils.areAllValuesSet(value, this.min) || this.utils.areAllValuesSet(value, this.max)) {
+      // @TODO how to specify lengths of arrays
+      if (this.utils.areAllValuesSet(value, this.min, this.max) || this.utils.areAllValuesSet(value, this.min) ||
+       this.utils.areAllValuesSet(value, this.max)) {
         throw new Error('nested and length properties can\'t be set both');
       }
       this._nested = value;
+    }
+  }
+
+  getErrorMessage(property: SchemaConfigEntryProperty) {
+    if (this.utils.hasMessageProperty(property)) {
+      return this.checkLanguageErrorMessage(property.message);
+    }
+    if (!this.utils.isNil(this.message)) {
+      return this.checkLanguageErrorMessage(this.message);
+    }
+    return 'something went wrong';
+  }
+
+  checkLanguageErrorMessage(message: message) {
+    if (this.utils.isString(message)) {
+      return message;
+    }
+    if (this.utils.isMessageObject(message)) {
+      // return message[languageKey];
     }
   }
 }
