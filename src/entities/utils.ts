@@ -1,47 +1,115 @@
-import { IOptions } from "./../interfaces/options";
-import { DEFAULT_OPTIONS } from "./../constants/default";
-import { Options } from "./options";
+import { IOptions } from './../interfaces/options';
+import { DEFAULT_OPTIONS } from './../constants/default';
+import { Options } from './options';
+import { Type, ValidValues, IMinOrMax, IMinObject, IMaxObject, IMessageEntry, IWithMessage } from '../interfaces/schema';
 
 export class Utils {
-  private options: Options;
+  private _options: Options;
+  public get options(): Options {
+    return this._options;
+  }
 
   constructor(options: Options = new Options(DEFAULT_OPTIONS)) {
-    this.options = options;
+    this._options = options;
   }
 
-  checkType(type: string, parameter: any, options?: IOptions) {
-    if (type !== undefined) {
-      switch (type) {
-        case 'boolean':
-          return this.isBoolean(parameter);
-        case 'number':
-          return this.isNumber(parameter);
-        case 'integer':
-          return this.isInteger(parameter);
-        case 'string':
-          return this.isString(parameter);
-        case 'boolean[]':
-          return this.isBoolArray(parameter);
-        case 'number[]':
-          return this.isNumberArray(parameter);
-        case 'integer[]':
-          return this.isIntegerArray(parameter);
-        case 'string[]':
-          return this.isStringArray(parameter);
-        case 'object':
-          return this.isPlainObject(parameter);
-        case 'array':
-          return this.isArray(parameter);
-        case 'mongo_id':
-          return this.isMongoID(parameter);
-        case 'email':
-          return this.isEmail(parameter);
-      }
+  checkLengthProperty(params: IMinOrMax, parameter: any): boolean {
+    if (this.isNumber(parameter)) {
+      return this.checkNumberLength(params, parameter);
+    }
+    if (this.isString(parameter)) {
+      return this.checkStringLength(params, parameter);
+    }
+    if (this.isArray(parameter)) {
+      return this.checkArrayLength(params, parameter);
+    }
+    return false;
+  }
+
+  private instanceOfMinObject(object: any): object is IMinObject {
+    return 'min' in object;
+  }
+
+  private instanceOfMaxObject(object: any): object is IMaxObject {
+    return 'max' in object;
+  }
+
+  checkArrayLength(params: IMinOrMax, parameter: any[]): boolean {
+    let result = false;
+    if (this.instanceOfMinObject(params)) {
+      result = parameter.length >= params.min;
+    }
+    if (this.instanceOfMaxObject(params)) {
+      result = parameter.length <= params.max;
+    }
+    return result;
+  }
+
+  checkStringLength(params: IMinOrMax, parameter: string): boolean {
+    let result = false;
+    if (this.instanceOfMinObject(params)) {
+      result = parameter.length >= params.min;
+    }
+    if (this.instanceOfMaxObject(params)) {
+      result = parameter.length <= params.max;
+    }
+    return result;
+  }
+
+  checkNumberLength(params: IMinOrMax, parameter: number): boolean {
+    let result = false;
+    if (this.instanceOfMinObject(params)) {
+      result = parameter >= params.min;
+    }
+    if (this.instanceOfMaxObject(params)) {
+      result = parameter <= params.max;
+    }
+    return result;
+  }
+
+  checkRequired(required: boolean, parameter: any): boolean {
+    return !(required === true && parameter === undefined);
+  }
+
+  checkValidValue(validValues: ValidValues, parameter: any): boolean {
+    return validValues.includes(parameter);
+  }
+
+  checkRegExp(regExp: RegExp, parameter: any): boolean {
+    return new RegExp(regExp).test(parameter);
+  }
+
+  checkType(type: Type, parameter: any): boolean {
+    switch (type) {
+      case 'boolean':
+        return this.isBoolean(parameter);
+      case 'number':
+        return this.isNumber(parameter);
+      case 'integer':
+        return this.isInteger(parameter);
+      case 'string':
+        return this.isString(parameter);
+      case 'boolean[]':
+        return this.isBoolArray(parameter);
+      case 'number[]':
+        return this.isNumberArray(parameter);
+      case 'integer[]':
+        return this.isIntegerArray(parameter);
+      case 'string[]':
+        return this.isStringArray(parameter);
+      case 'object':
+        return this.isPlainObject(parameter);
+      case 'array':
+        return this.isArray(parameter);
+      case 'mongo_id':
+        return this.isMongoID(parameter);
+      case 'email':
+        return this.isEmail(parameter);
     }
   }
-  isBoolArray(array: any) {
+  isBoolArray(array: any): boolean {
     if (this.isArray(array) && array.length > 0) {
-      for (let entry of array) {
+      for (const entry of array) {
         if (!this.isBoolean(entry)) {
           return false;
         }
@@ -51,9 +119,9 @@ export class Utils {
     return false;
   }
 
-  isNumberArray(array: any) {
+  isNumberArray(array: any): boolean {
     if (this.isArray(array) && array.length > 0) {
-      for (let entry of array) {
+      for (const entry of array) {
         if (!this.isNumber(entry)) {
           return false;
         }
@@ -63,9 +131,9 @@ export class Utils {
     return false;
   }
 
-  isIntegerArray(array: any) {
+  isIntegerArray(array: any): boolean {
     if (this.isArray(array) && array.length > 0) {
-      for (let entry of array) {
+      for (const entry of array) {
         if (!this.isInteger(entry)) {
           return false;
         }
@@ -75,9 +143,9 @@ export class Utils {
     return false;
   }
 
-  isStringArray(array: any) {
+  isStringArray(array: any): boolean {
     if (this.isArray(array) && array.length > 0) {
-      for (let entry of array) {
+      for (const entry of array) {
         if (!this.isString(entry)) {
           return false;
         }
@@ -87,19 +155,19 @@ export class Utils {
     return false;
   }
 
-  isMongoID(id: any) {
+  isMongoID(id: any): boolean {
     const mongoIdRegExp = new RegExp('^[0-9a-fA-F]{24}$');
     return mongoIdRegExp.test(id);
   }
 
-  isEmail(email: string) {
+  isEmail(email: string): boolean {
     const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return emailRegExp.test(email);
   }
 
   getValue(path: string[], object: any): any {
-    let value = object
-    for (let pathEntry of path) {
+    let value = object;
+    for (const pathEntry of path) {
       value = value[pathEntry];
     }
     return value;
@@ -111,14 +179,14 @@ export class Utils {
     if (this.isPlainObject(value)) {
       if (this.isString(value.message)) {
         return (this.isInteger(value.value) && this.isString(value.message));
-      } else {
-        return (this.isInteger(value.value) && this.isMessageObject(value.message));
       }
+      return (this.isInteger(value.value) && this.isMessageObject(value.message));
     }
     return false;
   }
   isValidTypeWithLengthProperties(value: string): boolean {
-    const validTypes = ['number', 'integer', 'string', 'boolean[]', 'number[]', 'integer[]', 'string[]', 'array'];
+    const validTypes = ['number', 'integer', 'string', 'boolean[]', 'number[]', 'integer[]',
+      'string[]', 'array'];
     return validTypes.includes(value);
   }
 
@@ -134,8 +202,9 @@ export class Utils {
 
   isValidValuesArray(value: any): boolean {
     if (this.isArray(value)) {
-      for (let valid_value of value) {
-        if (!this.isBoolean(valid_value) && !this.isNumber(valid_value) && !this.isString(valid_value)) {
+      for (const validValue of value) {
+        if (!this.isBoolean(validValue) && !this.isNumber(validValue) && 
+        !this.isString(validValue)) {
           return false;
         }
       }
@@ -160,15 +229,15 @@ export class Utils {
   }
 
   checkEmptyJsBasedOnOptions(value: any): boolean {
-    return !(Object.keys(value).length === 0 && !this.options.allowEmpty);
+    return !(Object.keys(value).length === 0 && !this._options.allowEmpty);
   }
 
   isArray(value: any): boolean {
     return value.constructor === Array && this.checkEmptyArrayBasedOnOptions(value);
   }
 
-  checkEmptyArrayBasedOnOptions(value: any) : boolean {
-    return !(value.length === 0 && !this.options.allowEmpty);
+  checkEmptyArrayBasedOnOptions(value: any): boolean {
+    return !(value.length === 0 && !this._options.allowEmpty);
   }
 
   isBoolean(value: any): boolean {
@@ -176,32 +245,34 @@ export class Utils {
   }
 
   isNumber(value: any): boolean {
-    return typeof (value) === 'number' && this.checkNaNBasedOnOptions(value) && this.checkInfiteBasedOnOptions(value);
+    return typeof (value) === 'number' && this.checkNaNBasedOnOptions(value) &&
+     this.checkInfiteBasedOnOptions(value);
   }
 
   checkNaNBasedOnOptions(value: any): boolean {
-    return !(isNaN(value) && !this.options.allowNaN);
+    return !(isNaN(value) && !this._options.allowNaN);
   }
 
   checkInfiteBasedOnOptions(value: any): boolean {
-    return !((value === Number.POSITIVE_INFINITY || value === Number.NEGATIVE_INFINITY) && !this.options.allowInfinite);
+    return !((value === Number.POSITIVE_INFINITY || value === Number.NEGATIVE_INFINITY) &&
+     !this._options.allowInfinite);
   }
 
   isInteger(value: any): boolean {
     return Number.isInteger(value);
   }
 
-  isString(value: any): boolean {
-    return (typeof value === 'string' || (typeof value === 'object'
-      && this.getBaseTag(value) === '[object String]')) && this.checkEmptyStringBasedOnOptions(value);
+  isString(value: any): value is string {
+    return (typeof value === 'string' || (typeof value === 'object' &&
+     this.getBaseTag(value) === '[object String]')) && this.checkEmptyStringBasedOnOptions(value);
   }
 
   checkEmptyStringBasedOnOptions(value: any): boolean {
-    return !(value === '' && !this.options.allowEmpty);
+    return !(value === '' && !this._options.allowEmpty);
   }
 
   isRegExp(value: any): boolean {
-    return typeof value === 'object' && this.getBaseTag(value) === '[object RegExp]'
+    return typeof value === 'object' && this.getBaseTag(value) === '[object RegExp]';
   }
 
   isRegExpWithSpecificErrorMessage(value: any): boolean {
@@ -230,8 +301,8 @@ export class Utils {
     return false;
   }
 
-  isSet(value: any) {
-    return typeof value !== 'undefined' && value !== null;
+  isNil(value:any): value is null | undefined {
+    return value === undefined || value === null;
   }
 
   areAllValuesSet(...args: any[]) {
@@ -244,10 +315,10 @@ export class Utils {
   }
 
   isFilled(value: any): boolean {
-    return Object.keys(value).length > 0
+    return Object.keys(value).length > 0;
   }
 
-  isMessageObject(message: any): boolean {
+  isMessageObject(message: any): message is IMessageEntry  {
     if (this.isPlainObject(message) && this.isFilled(message)) {
       let result = true;
       const messageEntries = Object.entries(message);
@@ -259,7 +330,11 @@ export class Utils {
       });
       return result;
     }
-    return false
+    return false;
+  }
+
+  hasMessageProperty(property: any): property is IWithMessage {
+    return !this.isNil(property.message);
   }
 
   private getBaseTag(value: any): string {

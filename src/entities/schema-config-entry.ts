@@ -7,7 +7,7 @@ import {
 import { Utils } from './utils';
 
 export class SchemaConfigEntry {
-  private utils = new Utils();
+  private utils: Utils;
 
   private _fullPath: string[];
   public get fullPath(): string[] {
@@ -252,7 +252,11 @@ export class SchemaConfigEntry {
     }
   }
 
-  getErrorMessage(property: SchemaConfigEntryProperty) {
+  constructor(utils: Utils) {
+    this.utils = utils;
+  }
+
+  getErrorMessage(property: SchemaConfigEntryProperty) : string {
     if (this.utils.hasMessageProperty(property)) {
       return this.checkLanguageErrorMessage(property.message);
     }
@@ -262,12 +266,13 @@ export class SchemaConfigEntry {
     return 'something went wrong';
   }
 
-  checkLanguageErrorMessage(message: message) {
+  checkLanguageErrorMessage(message: message) : string {
     if (this.utils.isString(message)) {
       return message;
     }
-    if (this.utils.isMessageObject(message)) {
-      // return message[languageKey];
+    if (this.utils.isMessageObject(message) && !this.utils.isNil(this.utils.options.countryCode)) {
+      return message[this.utils.options.countryCode];
     }
+    return 'something went wrong';
   }
 }
