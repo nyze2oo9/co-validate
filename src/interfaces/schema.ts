@@ -1,4 +1,4 @@
-import { SchemaConfigEntry } from "../entities/schema-config-entry";
+import { SchemaConfigEntry } from '../entities/schema-config-entry';
 
 export interface ISchemaConfigEntry {
   fullPath?: string[];
@@ -20,6 +20,8 @@ export type min = number | INumberValueWithSpecificErrorMessage;
 export type max = number | INumberValueWithSpecificErrorMessage;
 export type message = string | IMessageEntry;
 
+export type SchemaConfigEntryProperty = ISchemaConfigEntry[keyof ISchemaConfigEntry];
+
 export type Type =
   'boolean'
   | 'number'
@@ -35,7 +37,7 @@ export type Type =
   | 'email';
 
 export type RegExpValue = RegExp;
-export type ValidValues = (boolean | number | string)[]
+export type ValidValues = (boolean | number | string)[];
 
 export interface ISchemaConfig {
   [key: string]: ISchemaConfigEntry;
@@ -78,3 +80,25 @@ export interface INumberValueWithSpecificErrorMessage {
   value: number;
   message: string | IMessageEntry;
 }
+
+export type IMinOrMax = IMinObject | IMaxObject;
+
+export interface IMinObject {
+  min: number;
+}
+
+export interface IMaxObject {
+  max: number;
+}
+
+export interface IWithMessage {
+  message: IMessageEntry;
+}
+
+export type SchemaConfigEntries = [string, ISchemaConfigEntry, number][];
+
+export type addNestedToSchemaConfigEntriesWithIndexParams = {
+  nested: ISchemaConfig;
+  index: number;
+  schemaConfigEntriesWithIndex: SchemaConfigEntries;
+};
