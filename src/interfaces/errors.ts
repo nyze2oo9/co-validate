@@ -1,4 +1,4 @@
 export interface IError {
-  path: string[];
+  fullPath: string[];
   message: string;
 }

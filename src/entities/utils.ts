@@ -1,7 +1,9 @@
 import { IOptions } from './../interfaces/options';
 import { DEFAULT_OPTIONS } from './../constants/default';
 import { Options } from './options';
-import { Type, ValidValues, IMinOrMax, IMinObject, IMaxObject, IMessageEntry, IWithMessage } from '../interfaces/schema';
+import { Type, ValidValues, IMinOrMax, IMinObject, IMaxObject, IMessageEntry, IWithMessage, ILength, IFullPath, ISchemaConfigEntry } from '../interfaces/schema';
+import { SchemaConfigEntry } from './schema-config-entry';
+import { IGetNewSchemaConfigEntries, IGetAllLengthsFromEnd, IGetNestedLengths } from '../interfaces/utils';
 
 export class Utils {
   private _options: Options;
@@ -11,6 +13,71 @@ export class Utils {
 
   constructor(options: Options = new Options(DEFAULT_OPTIONS)) {
     this._options = options;
+  }
+
+  isSchemaConfigEntryNeeded(schemaConfigEntry: ISchemaConfigEntry) {
+    const neededKeys = ['type', 'reg_exp', 'valid_values', 'required', 'min', 'max'];
+    return Object.keys(schemaConfigEntry).some(key => neededKeys.includes(key));
+  }
+
+  getNewSchemaConfigEntry(params: IGetNewSchemaConfigEntries): SchemaConfigEntry {
+    const { schemaConfigEntry, index, pathEntry } = params;
+    const newSchemaConfigEntry = this.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.fullPath[index] = pathEntry.toString();
+    return newSchemaConfigEntry;
+  }
+
+  getLength(params: IGetAllLengthsFromEnd): number | undefined {
+    const { fullPath, index, variableToValidate } = params;
+    const path = fullPath.slice(0, index);
+    if (this.isStringArray(path)) {
+      return this.getValue(path, variableToValidate).length;
+    }
+    return undefined;
+  }
+
+  getNestedLengths(params: IGetNestedLengths) {
+
+  }
+
+  getFirstIndexes(fullPath: IFullPath, entry: string): number {
+    for (let i = 0; i < fullPath.length; i += 1) {
+      const entry = fullPath[i];
+      if (!this.isString(entry) && entry.array === true) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  cloneSchemaConfigEntryInstance(schemaConfigEntry: SchemaConfigEntry): SchemaConfigEntry {
+    const newSchemaConfigEntry = new SchemaConfigEntry(this);
+    newSchemaConfigEntry.fullPath = schemaConfigEntry.fullPath.slice(0);
+    if (!this.isNil(schemaConfigEntry.type)) {
+      newSchemaConfigEntry.type = JSON.parse(JSON.stringify(schemaConfigEntry.type));
+    }
+    if (!this.isNil(schemaConfigEntry.regExp)) {
+      newSchemaConfigEntry.regExp = JSON.parse(JSON.stringify(schemaConfigEntry.regExp));
+    }
+    if (!this.isNil(schemaConfigEntry.validValues)) {
+      newSchemaConfigEntry.validValues = JSON.parse(JSON.stringify(schemaConfigEntry.validValues));
+    }
+    if (!this.isNil(schemaConfigEntry.required)) {
+      newSchemaConfigEntry.required = JSON.parse(JSON.stringify(schemaConfigEntry.required));
+    }
+    if (!this.isNil(schemaConfigEntry.min)) {
+      newSchemaConfigEntry.min = JSON.parse(JSON.stringify(schemaConfigEntry.min));
+    }
+    if (!this.isNil(schemaConfigEntry.max)) {
+      newSchemaConfigEntry.max = JSON.parse(JSON.stringify(schemaConfigEntry.max));
+    }
+    if (!this.isNil(schemaConfigEntry.message)) {
+      newSchemaConfigEntry.message = JSON.parse(JSON.stringify(schemaConfigEntry.message));
+    }
+    if (!this.isNil(schemaConfigEntry.nested)) {
+      newSchemaConfigEntry.nested = JSON.parse(JSON.stringify(schemaConfigEntry.nested));
+    }
+    return newSchemaConfigEntry;
   }
 
   checkLengthProperty(params: IMinOrMax, parameter: any): boolean {
@@ -143,7 +210,7 @@ export class Utils {
     return false;
   }
 
-  isStringArray(array: any): boolean {
+  isStringArray(array: any): array is string[] {
     if (this.isArray(array) && array.length > 0) {
       for (const entry of array) {
         if (!this.isString(entry)) {
@@ -168,6 +235,9 @@ export class Utils {
   getValue(path: string[], object: any): any {
     let value = object;
     for (const pathEntry of path) {
+      if (!this.isString(pathEntry)) {
+        throw new Error('path should just contain strings at this point');
+      }
       value = value[pathEntry];
     }
     return value;
@@ -203,8 +273,8 @@ export class Utils {
   isValidValuesArray(value: any): boolean {
     if (this.isArray(value)) {
       for (const validValue of value) {
-        if (!this.isBoolean(validValue) && !this.isNumber(validValue) && 
-        !this.isString(validValue)) {
+        if (!this.isBoolean(validValue) && !this.isNumber(validValue) &&
+          !this.isString(validValue)) {
           return false;
         }
       }
@@ -223,7 +293,7 @@ export class Utils {
     return false;
   }
 
-  isPlainObject(value: any): boolean {
+  isPlainObject(value: any): boolean  {
     return (value !== null && typeof value === 'object'
       && this.getBaseTag(value) === '[object Object]') && this.checkEmptyJsBasedOnOptions(value);
   }
@@ -232,8 +302,8 @@ export class Utils {
     return !(Object.keys(value).length === 0 && !this._options.allowEmpty);
   }
 
-  isArray(value: any): boolean {
-    return value.constructor === Array && this.checkEmptyArrayBasedOnOptions(value);
+  isArray(value: any): value is any[] {
+    return value !== undefined && value.constructor === Array && this.checkEmptyArrayBasedOnOptions(value);
   }
 
   checkEmptyArrayBasedOnOptions(value: any): boolean {
@@ -246,7 +316,7 @@ export class Utils {
 
   isNumber(value: any): boolean {
     return typeof (value) === 'number' && this.checkNaNBasedOnOptions(value) &&
-     this.checkInfiteBasedOnOptions(value);
+      this.checkInfiteBasedOnOptions(value);
   }
 
   checkNaNBasedOnOptions(value: any): boolean {
@@ -255,7 +325,7 @@ export class Utils {
 
   checkInfiteBasedOnOptions(value: any): boolean {
     return !((value === Number.POSITIVE_INFINITY || value === Number.NEGATIVE_INFINITY) &&
-     !this._options.allowInfinite);
+      !this._options.allowInfinite);
   }
 
   isInteger(value: any): boolean {
@@ -264,7 +334,7 @@ export class Utils {
 
   isString(value: any): value is string {
     return (typeof value === 'string' || (typeof value === 'object' &&
-     this.getBaseTag(value) === '[object String]')) && this.checkEmptyStringBasedOnOptions(value);
+      this.getBaseTag(value) === '[object String]')) && this.checkEmptyStringBasedOnOptions(value);
   }
 
   checkEmptyStringBasedOnOptions(value: any): boolean {
@@ -301,7 +371,7 @@ export class Utils {
     return false;
   }
 
-  isNil(value:any): value is null | undefined {
+  isNil(value: any): value is null | undefined {
     return value === undefined || value === null;
   }
 
@@ -318,7 +388,7 @@ export class Utils {
     return Object.keys(value).length > 0;
   }
 
-  isMessageObject(message: any): message is IMessageEntry  {
+  isMessageObject(message: any): message is IMessageEntry {
     if (this.isPlainObject(message) && this.isFilled(message)) {
       let result = true;
       const messageEntries = Object.entries(message);

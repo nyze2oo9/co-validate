@@ -1,7 +1,7 @@
 import { SchemaConfigEntry } from '../entities/schema-config-entry';
 
 export interface ISchemaConfigEntry {
-  fullPath?: string[];
+  fullPath?: (string | ILength)[];
   type?: type;
   reg_exp?: reg_exp;
   valid_values?: valid_values;
@@ -9,7 +9,7 @@ export interface ISchemaConfigEntry {
   min?: min;
   max?: max;
   message?: message;
-  nested?: ISchemaConfig;
+  nested?: ISchemaConfig | ISchemaConfig[];
 }
 
 export type type = Type | ITypeValueWithSpecificErrorMessage;
@@ -39,8 +39,13 @@ export type Type =
 export type RegExpValue = RegExp;
 export type ValidValues = (boolean | number | string)[];
 
+export interface ILength {
+  length: number;
+}
+
 export interface ISchemaConfig {
   [key: string]: ISchemaConfigEntry;
+  [key: number]: ISchemaConfigEntry;
 }
 
 export interface ISchemaConfigValidated {
@@ -95,10 +100,17 @@ export interface IWithMessage {
   message: IMessageEntry;
 }
 
-export type SchemaConfigEntries = [string, ISchemaConfigEntry, number][];
+export type SchemaConfigEntries = [IFullPathEntry, ISchemaConfigEntry, number][];
 
 export type addNestedToSchemaConfigEntriesWithIndexParams = {
-  nested: ISchemaConfig;
+  nested: ISchemaConfig | ISchemaConfig[];
   index: number;
   schemaConfigEntriesWithIndex: SchemaConfigEntries;
 };
+
+export interface IArrayKey {
+  array: boolean;
+}
+
+export type IFullPath = (string | IArrayKey)[];
+export type IFullPathEntry = string | IArrayKey;

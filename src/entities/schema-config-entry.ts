@@ -2,18 +2,18 @@ import {
   Type, ITypeValueWithSpecificErrorMessage, IStringValueWithSpecificErrorMessage,
   IRegExpValueWithSpecificErrorMessage, IArrayValueWithSpecificErrorMessage,
   IBooleanValueWithSpecificErrorMessage, INumberValueWithSpecificErrorMessage,
-  IMessageEntry, ISchemaConfig, valid_values, type, reg_exp, required, min, max, RegExpValue, ValidValues, SchemaConfigEntryProperty, message,
+  IMessageEntry, ISchemaConfig, valid_values, type, reg_exp, required, min, max, RegExpValue, ValidValues, SchemaConfigEntryProperty, message, ILength, IFullPath,
 } from './../interfaces/schema';
 import { Utils } from './utils';
 
 export class SchemaConfigEntry {
   private utils: Utils;
 
-  private _fullPath: string[];
-  public get fullPath(): string[] {
+  private _fullPath: IFullPath;
+  public get fullPath(): IFullPath {
     return this._fullPath;
   }
-  public set fullPath(value: string[]) {
+  public set fullPath(value: IFullPath) {
     this._fullPath = value;
   }
 
@@ -227,12 +227,12 @@ export class SchemaConfigEntry {
     }
   }
 
-  private _nested?: ISchemaConfig;
+  private _nested?: ISchemaConfig | ISchemaConfig[];
 
-  public get nested(): ISchemaConfig | undefined {
+  public get nested(): ISchemaConfig | ISchemaConfig[] | undefined {
     return this._nested;
   }
-  public set nested(value: ISchemaConfig | undefined) {
+  public set nested(value: ISchemaConfig | ISchemaConfig[] | undefined) {
     if (value !== undefined) {
       if (this.utils.areAllValuesSet(value, this.type)) {
         throw new Error('nested and type can\'t be set both');

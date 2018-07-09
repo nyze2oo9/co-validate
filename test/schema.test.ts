@@ -45,7 +45,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 1 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'error message', 
       }]);
   });
@@ -59,7 +59,7 @@ describe('Validation works', () => {
        testSchema.validate({ test1: 1 });
        expect(testSchema.validationErrorMessages).to.eql([
          { 
-           path: ['test1'],
+           fullPath: ['test1'],
            message: 'something went wrong', 
          }]);
      });
@@ -76,7 +76,7 @@ describe('Validation works', () => {
        testSchema.validate({ test1: 1 });
        expect(testSchema.validationErrorMessages).to.eql([
          { 
-           path: ['test1'],
+           fullPath: ['test1'],
            message: 'error message', 
          }]);
      });
@@ -101,7 +101,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 1 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'german error message', 
       }]);
   });
@@ -126,7 +126,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 1 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'english error message', 
       }]);
   });
@@ -149,7 +149,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 1 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'german error message', 
       }]);
   });
@@ -172,7 +172,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 1 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'english error message', 
       }]);
   });
@@ -198,7 +198,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: { test2 : 1 } });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1', 'test2'],
+        fullPath: ['test1', 'test2'],
         message: 'error message',
       }]);
   });
@@ -222,7 +222,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 'abd' });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'error message', 
       }]);
   });
@@ -236,7 +236,7 @@ describe('Validation works', () => {
        testSchema.validate({ test1: 'abd' });
        expect(testSchema.validationErrorMessages).to.eql([
          { 
-           path: ['test1'],
+           fullPath: ['test1'],
            message: 'something went wrong', 
          }]);
      });
@@ -252,7 +252,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 'abd' });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'error message', 
       }]);
   });
@@ -277,7 +277,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 'abd' });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'german error message', 
       }]);
   });
@@ -300,7 +300,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 'abd' });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'german error message', 
       }]);
   });
@@ -324,7 +324,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 4 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'error message', 
       }]);
   });
@@ -338,7 +338,7 @@ describe('Validation works', () => {
        testSchema.validate({ test1: 4 });
        expect(testSchema.validationErrorMessages).to.eql([
          { 
-           path: ['test1'],
+           fullPath: ['test1'],
            message: 'something went wrong', 
          }]);
      });
@@ -354,7 +354,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 4 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'error message', 
       }]);
   });
@@ -379,7 +379,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 4 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'german error message', 
       }]);
   });
@@ -402,7 +402,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 4 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'german error message', 
       }]);
   });
@@ -426,7 +426,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: undefined });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'error message', 
       }]);
   });
@@ -440,7 +440,7 @@ describe('Validation works', () => {
        testSchema.validate({ test1: undefined });
        expect(testSchema.validationErrorMessages).to.eql([
          { 
-           path: ['test1'],
+           fullPath: ['test1'],
            message: 'something went wrong', 
          }]);
      });
@@ -456,7 +456,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: undefined });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'error message', 
       }]);
   });
@@ -481,7 +481,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: undefined });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'german error message', 
       }]);
   });
@@ -504,7 +504,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: undefined });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'german error message', 
       }]);
   });
@@ -528,7 +528,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 1 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'error message', 
       }]);
   });
@@ -542,7 +542,7 @@ describe('Validation works', () => {
        testSchema.validate({ test1: 1 });
        expect(testSchema.validationErrorMessages).to.eql([
          { 
-           path: ['test1'],
+           fullPath: ['test1'],
            message: 'something went wrong', 
          }]);
      });
@@ -558,7 +558,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 1 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'error message', 
       }]);
   });
@@ -583,7 +583,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 1 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'german error message', 
       }]);
   });
@@ -606,7 +606,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 1 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'german error message', 
       }]);
   });
@@ -630,7 +630,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 3 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'error message', 
       }]);
   });
@@ -644,7 +644,7 @@ describe('Validation works', () => {
        testSchema.validate({ test1: 3 });
        expect(testSchema.validationErrorMessages).to.eql([
          { 
-           path: ['test1'],
+           fullPath: ['test1'],
            message: 'something went wrong', 
          }]);
      });
@@ -660,7 +660,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 3 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'error message', 
       }]);
   });
@@ -685,7 +685,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 3 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'german error message', 
       }]);
   });
@@ -708,7 +708,7 @@ describe('Validation works', () => {
     testSchema.validate({ test1: 3 });
     expect(testSchema.validationErrorMessages).to.eql([
       { 
-        path: ['test1'],
+        fullPath: ['test1'],
         message: 'german error message', 
       }]);
   });
@@ -720,6 +720,208 @@ describe('Validation works', () => {
       },
     });
     testSchema.validate({ test1: 1 });
+    expect(testSchema.validationErrorMessages).to.eql([]);
+  });
+  it('shouldn\'t return error messages, because all objects in the array are valid', () => {
+    const testSchema = new Schema({
+      test1: {
+        nested: [
+          {
+            test2: {
+              nested: [
+                {
+                  testdeep: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+            test3: {
+              type: 'number',
+            },
+          },
+        ],
+      },
+    });
+
+    const toTest = {
+      test1: [
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: 1,
+        },
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: 2,
+        },
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: 3,
+        },
+      ], 
+    };
+
+    testSchema.validate(toTest);
+    expect(testSchema.validationErrorMessages).to.eql([]);
+  });
+  it('should return error message, because second object in the array isn\'t valid', () => {
+    const testSchema = new Schema({
+      test1: {
+        nested: [
+          {
+            test2: {
+              nested: [
+                {
+                  testdeep: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+            test3: {
+              type: 'number',
+            },
+          },
+        ],
+      },
+    });
+
+    const toTest = {
+      test1: [
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: 1,
+        },
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 2,
+            },
+          ],
+          test3: 2,
+        },
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: 3,
+        },
+      ], 
+    };
+
+    testSchema.validate(toTest);
+    expect(testSchema.validationErrorMessages).to.eql([{
+      fullPath: ['test1', '1', 'test2', '1', 'testdeep'],
+      message: 'something went wrong',
+    }]);
+  });
+  it('should distinguish between arrays and objects also with key 0', () => {
+    const testSchema = new Schema({
+      test1: {
+        nested: [
+          {
+            test2: {
+              nested: [
+                {
+                  testdeep: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+            test3: {
+              nested: {
+                0: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        ],
+      },
+    });
+
+    const toTest = {
+      test1: [
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: {
+            0: 'test',
+          },
+        },
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: {
+            0: 'test',
+          },
+        },
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: {
+            0: 'test',
+          },
+        },
+      ], 
+    };
+
+    testSchema.validate(toTest);
     expect(testSchema.validationErrorMessages).to.eql([]);
   });
 });
