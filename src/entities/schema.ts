@@ -134,7 +134,7 @@ export class Schema {
     while (schemaConfigEntriesWithArrayPath.length) {
       const currentSchemaConfigEntry = schemaConfigEntriesWithArrayPath.shift();
       if (!this.utils.isNil(currentSchemaConfigEntry)) {
-        const currentIndex = this.utils.getFirstIndexes(currentSchemaConfigEntry.fullPath, '0');
+        const currentIndex = this.utils.getFirstIndex(currentSchemaConfigEntry.fullPath, '0');
         const arrayLength = this.utils.getLength({
           variableToValidate,
           fullPath: currentSchemaConfigEntry.fullPath,

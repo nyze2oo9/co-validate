@@ -31,7 +31,7 @@ export class Utils {
     const { fullPath, index, variableToValidate } = params;
     const path = fullPath.slice(0, index);
     if (this.isStringArray(path)) {
-      const value =  this.getValue(path, variableToValidate);
+      const value = this.getValue(path, variableToValidate);
       if (!this.isNil(value)) {
         return value.length;
       }
@@ -39,11 +39,7 @@ export class Utils {
     return 1;
   }
 
-  getNestedLengths(params: IGetNestedLengths) {
-
-  }
-
-  getFirstIndexes(fullPath: IFullPath, entry: string): number {
+  getFirstIndex(fullPath: IFullPath, entry: string): number {
     for (let i = 0; i < fullPath.length; i += 1) {
       const entry = fullPath[i];
       if (!this.isString(entry) && entry.array === true) {
@@ -299,7 +295,7 @@ export class Utils {
     return false;
   }
 
-  isPlainObject(value: any): boolean  {
+  isPlainObject(value: any): boolean {
     return (value !== null && typeof value === 'object'
       && this.getBaseTag(value) === '[object Object]') && this.checkEmptyJsBasedOnOptions(value);
   }
