@@ -270,8 +270,10 @@ export class SchemaConfigEntry {
     if (this.utils.isString(message)) {
       return message;
     }
-    if (this.utils.isMessageObject(message) && !this.utils.isNil(this.utils.options.countryCode)) {
-      return message[this.utils.options.countryCode];
+    const countryCode = this.utils.options.countryCode;
+    if (this.utils.isMessageObject(message) && !this.utils.isNil(countryCode) 
+    && !this.utils.isNil(message[countryCode])) {
+      return message[countryCode];
     }
     return 'something went wrong';
   }
