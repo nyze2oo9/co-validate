@@ -27,13 +27,16 @@ export class Utils {
     return newSchemaConfigEntry;
   }
 
-  getLength(params: IGetAllLengthsFromEnd): number | undefined {
+  getLength(params: IGetAllLengthsFromEnd): number {
     const { fullPath, index, variableToValidate } = params;
     const path = fullPath.slice(0, index);
     if (this.isStringArray(path)) {
-      return this.getValue(path, variableToValidate).length;
+      const value =  this.getValue(path, variableToValidate);
+      if (!this.isNil(value)) {
+        return value.length;
+      }
     }
-    return undefined;
+    return 1;
   }
 
   getNestedLengths(params: IGetNestedLengths) {
@@ -237,6 +240,9 @@ export class Utils {
     for (const pathEntry of path) {
       if (!this.isString(pathEntry)) {
         throw new Error('path should just contain strings at this point');
+      }
+      if (this.isNil(value)) {
+        return undefined;
       }
       value = value[pathEntry];
     }

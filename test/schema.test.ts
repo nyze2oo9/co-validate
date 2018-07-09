@@ -924,5 +924,172 @@ describe('Validation works', () => {
     testSchema.validate(toTest);
     expect(testSchema.validationErrorMessages).to.eql([]);
   });
+  it('it should be fine, that properties are not set that are not required', () => {
+    const testSchema = new Schema({
+      test1: {
+        nested: [
+          {
+            test2: {
+              nested: [
+                {
+                  notneeded1: {
+                    type: 'string',
+                  },
+                  notneeded2: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+            test3: {
+              type: 'string',
+              required: true,
+            },
+          },
+        ],
+      },
+    });
+
+    const toTest = {
+      test1: [
+        {
+          test3: 'test',
+        },
+      ], 
+    };
+
+    testSchema.validate(toTest);
+    expect(testSchema.validationErrorMessages).to.eql([]);
+  });
+  it('it shouldn\'t be fine, that properties are not set that are required', () => {
+    const testSchema = new Schema({
+      test1: {
+        nested: [
+          {
+            test2: {
+              nested: [
+                {
+                  notneeded1: {
+                    type: 'string',
+                  },
+                  notneeded2: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+            test3: {
+              type: 'string',
+              required: true,
+            },
+          },
+        ],
+      },
+    });
+
+    const toTest = {
+      test1: [
+        {
+          test2: [
+            {
+              notneeded1: 'test',
+              notneeded2: 'test',
+            },
+          ],
+        },
+      ], 
+    };
+
+    testSchema.validate(toTest);
+    expect(testSchema.validationErrorMessages).to.eql([{
+      fullPath: ['test1', '0', 'test3'],
+      message: 'something went wrong',
+    }]);
+  });
+  it.only('it shouldn\'t be fine, that properties are not set that are required in arrays', () => {
+    const testSchema = new Schema({
+      test1: {
+        nested: [
+          {
+            test2: {
+              nested: [
+                {
+                  needed: {
+                    type: 'string',
+                    required: true,
+                  },
+                  notneeded: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+            test3: {
+              type: 'string',
+            },
+          },
+        ],
+      },
+    });
+
+    const toTest = {
+      test1: [
+        {
+          test3: 'test',
+        },
+      ], 
+    };
+
+    testSchema.validate(toTest);
+    expect(testSchema.validationErrorMessages).to.eql([{
+      fullPath: ['test1', '0', 'test2', '0', 'needed'],
+      message: 'something went wrong',
+    }]);
+  });
+  it.only('it should be fine, that properties are not set that are not required in arrays', () => {
+    const testSchema = new Schema({
+      test1: {
+        nested: [
+          {
+            test2: {
+              nested: [
+                {
+                  needed: {
+                    type: 'string',
+                    required: true,
+                  },
+                  notneeded: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+            test3: {
+              type: 'string',
+            },
+          },
+        ],
+      },
+    });
+
+    const toTest = {
+      test1: [
+        {
+          test2: [
+            {
+              needed: 'test',
+            },
+            {
+              notneeded: 'test',
+              needed: 'test',
+            },
+          ],
+        },
+      ], 
+    };
+
+    testSchema.validate(toTest);
+    expect(testSchema.validationErrorMessages).to.eql([]);
+  });
 });
 

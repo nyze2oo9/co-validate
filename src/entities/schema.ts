@@ -116,12 +116,14 @@ export class Schema {
     this.schemaConfigValidated = this.fillArrayPaths(variableToValidate);
     for (const schemaConfigEntry of this.schemaConfigValidated) {
       const currentValue = this.utils.getValue((schemaConfigEntry.fullPath as string[]), variableToValidate);
-      this.validateType(schemaConfigEntry, currentValue);
-      this.validateRegExp(schemaConfigEntry, currentValue);
-      this.validateValidValues(schemaConfigEntry, currentValue);
       this.validateRequired(schemaConfigEntry, currentValue);
-      this.validateMin(schemaConfigEntry, currentValue);
-      this.validateMax(schemaConfigEntry, currentValue);
+      if (!this.utils.isNil(currentValue)) {
+        this.validateType(schemaConfigEntry, currentValue);
+        this.validateRegExp(schemaConfigEntry, currentValue);
+        this.validateValidValues(schemaConfigEntry, currentValue);
+        this.validateMin(schemaConfigEntry, currentValue);
+        this.validateMax(schemaConfigEntry, currentValue);
+      }   
     }
     return this;
   }
@@ -138,18 +140,16 @@ export class Schema {
           fullPath: currentSchemaConfigEntry.fullPath,
           index: currentIndex,
         });
-        if (!this.utils.isNil(arrayLength)) {
-          for (let i = 0; i < arrayLength; i += 1) {
-            const newSchemaConfigEntry = this.utils.getNewSchemaConfigEntry({
-              schemaConfigEntry: currentSchemaConfigEntry,
-              index: currentIndex,
-              pathEntry: i.toString(),
-            });
-            if (this.utils.isStringArray(newSchemaConfigEntry.fullPath)) {
-              newSchemaConfigEntries.push(newSchemaConfigEntry);
-            } else {
-              schemaConfigEntriesWithArrayPath.push(newSchemaConfigEntry);
-            }
+        for (let i = 0; i < arrayLength; i += 1) {
+          const newSchemaConfigEntry = this.utils.getNewSchemaConfigEntry({
+            schemaConfigEntry: currentSchemaConfigEntry,
+            index: currentIndex,
+            pathEntry: i.toString(),
+          });
+          if (this.utils.isStringArray(newSchemaConfigEntry.fullPath)) {
+            newSchemaConfigEntries.push(newSchemaConfigEntry);
+          } else {
+            schemaConfigEntriesWithArrayPath.push(newSchemaConfigEntry);
           }
         }
       }
