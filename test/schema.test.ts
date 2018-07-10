@@ -1006,7 +1006,7 @@ describe('Validation works', () => {
       message: 'something went wrong',
     }]);
   });
-  it.only('it shouldn\'t be fine, that properties are not set that are required in arrays', () => {
+  it('it shouldn\'t be fine, that properties are not set that are required in arrays', () => {
     const testSchema = new Schema({
       test1: {
         nested: [
@@ -1046,7 +1046,7 @@ describe('Validation works', () => {
       message: 'something went wrong',
     }]);
   });
-  it.only('it should be fine, that properties are not set that are not required in arrays', () => {
+  it('it should be fine, that properties are not set that are not required in arrays', () => {
     const testSchema = new Schema({
       test1: {
         nested: [
@@ -1090,6 +1090,38 @@ describe('Validation works', () => {
 
     testSchema.validate(toTest);
     expect(testSchema.validationErrorMessages).to.eql([]);
+  });
+  it('it should be fine, that properties are not set that are not required in arrays', () => {
+    const message = 'schemaConfig needs to be an object';
+
+    const errorFunction = () => {
+      const testSchema = new Schema(<any>true);
+    };
+
+    expect(errorFunction).to.throw(message);
+  });
+  it('should return fallback error message, when there is no matching property in the message object', () => {
+    const schema: ISchemaConfig = {
+      test1: {
+        type: 'string',
+        message: {
+          de: 'german error message',
+          en: 'english error message',
+        },
+      },
+    };
+
+    const options: IOptions =  {
+      countryCode: 'dee',
+    };
+
+    const testSchema = new Schema(schema, options);
+    testSchema.validate({ test1: 3 });
+    expect(testSchema.validationErrorMessages).to.eql([
+      { 
+        fullPath: ['test1'],
+        message: 'something went wrong', 
+      }]);
   });
 });
 
