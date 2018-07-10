@@ -262,6 +262,12 @@ export class Utils {
     return validTypes.includes(value);
   }
 
+  isTypeWhichRequiresIntegerLength(value: string): boolean {
+    const validTypes = ['string', 'boolean[]', 'number[]', 'integer[]',
+      'string[]', 'array'];
+    return validTypes.includes(value);
+  }
+
   isRequiredWithSpecificErrorMessage(value: any): boolean {
     if (this.isPlainObject(value)) {
       if (this.isString(value.message)) {

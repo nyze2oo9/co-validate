@@ -148,7 +148,7 @@ export class SchemaConfigEntry {
   public set min(value: min | undefined) {
     if (value !== undefined) {
       if (!this.utils.isNil(this.typeValue) && !this.utils.isValidTypeWithLengthProperties(this.typeValue)) {
-        throw new Error('Invalid type when usgin length properties');
+        throw new Error('Invalid type when using length properties');
       }
       if (this.utils.areAllValuesSet(value, this.regExp)) {
         throw new Error('min and regExp pattern can\'t be set both');
@@ -156,14 +156,18 @@ export class SchemaConfigEntry {
       if (this.utils.areAllValuesSet(value, this.validValues)) {
         throw new Error('min and validValues can\'t be set both');
       }
-      if (this.utils.areAllValuesSet(value, this.nested)) {
-        throw new Error('min and nested can\'t be set both');
+      if (this.utils.areAllValuesSet(value, this.nested) && !this.utils.isArray(this.nested)) {
+        throw new Error('min and nested can\'t be set both, when nested is an object');
       }
-      if (!this.utils.isInteger(value) && !this.utils.isMinOrMaxWithSpecificErrorMessage(value)) {
+      if (!this.utils.isNumber(value) && !this.utils.isMinOrMaxWithSpecificErrorMessage(value)) {
         throw new Error('min needs to be numbers');
       }
       const minValue = this.utils.isMinOrMaxWithSpecificErrorMessage(value) ? 
       (<INumberValueWithSpecificErrorMessage>value).value : <number>value;
+      if ((this.utils.isTypeWhichRequiresIntegerLength(this.typeValue) || this.utils.isArray(this.nested)) &&
+       !this.utils.isInteger(minValue)) {
+        throw new Error('for the current type or if nested is an array min needs to be an integer');
+      }
       if (minValue > this.maxValue) {
         throw new Error('min need to be lower than max');
       }
@@ -184,7 +188,7 @@ export class SchemaConfigEntry {
   public set max(value: max | undefined) {
     if (value !== undefined) {
       if (!this.utils.isNil(this.typeValue) && !this.utils.isValidTypeWithLengthProperties(this.typeValue)) {
-        throw new Error('Invalid type when usgin length properties');
+        throw new Error('Invalid type when using length properties');
       }
       if (this.utils.areAllValuesSet(value, this.regExp)) {
         throw new Error('max and regExp pattern can\'t be set both');
@@ -192,14 +196,18 @@ export class SchemaConfigEntry {
       if (this.utils.areAllValuesSet(value, this.validValues)) {
         throw new Error('max and validValues can\'t be set both');
       }
-      if (this.utils.areAllValuesSet(value, this.nested)) {
-        throw new Error('max and nested can\'t be set both');
+      if (this.utils.areAllValuesSet(value, this.nested) && !this.utils.isArray(this.nested)) {
+        throw new Error('max and nested can\'t be set both, when nested is an object');
       }
-      if (!this.utils.isInteger(value) && !this.utils.isMinOrMaxWithSpecificErrorMessage(value)) {
+      if (!this.utils.isNumber(value) && !this.utils.isMinOrMaxWithSpecificErrorMessage(value)) {
         throw new Error('max needs to be numbers');
       }
       const maxValue = this.utils.isMinOrMaxWithSpecificErrorMessage(value) ? 
       (<INumberValueWithSpecificErrorMessage>value).value : <number>value;
+      if ((this.utils.isTypeWhichRequiresIntegerLength(this.typeValue) || this.utils.isArray(this.nested)) &&
+      !this.utils.isInteger(maxValue)) {
+        throw new Error('for the current type or if nested is an array max needs to be an integer');
+      }
       if (this.minValue > maxValue) {
         throw new Error('min need to be lower than max');
       }
@@ -243,10 +251,13 @@ export class SchemaConfigEntry {
       if (this.utils.areAllValuesSet(value, this.validValues)) {
         throw new Error('nested and validValues can\'t be set both');
       }
-      // @TODO how to specify lengths of arrays
-      if (this.utils.areAllValuesSet(value, this.min, this.max) || this.utils.areAllValuesSet(value, this.min) ||
-       this.utils.areAllValuesSet(value, this.max)) {
-        throw new Error('nested and length properties can\'t be set both');
+      if ((this.utils.areAllValuesSet(value, this.min, this.max) || this.utils.areAllValuesSet(value, this.min) ||
+       this.utils.areAllValuesSet(value, this.max)) && !this.utils.isArray(value)) {
+        throw new Error('nested and length properties can\'t be set both, unless nested is an array');
+      }
+      if (!this.utils.isNil(this.min) && !this.utils.isInteger(this.min) || (!this.utils.isNil(this.max) 
+      && !this.utils.isInteger(this.max))) {
+        throw new Error('If nested is an array, length properties need to be integers');
       }
       this._nested = value;
     }
