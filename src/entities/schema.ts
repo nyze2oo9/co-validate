@@ -180,7 +180,6 @@ export class Schema {
     return result;
   }
 
-  // @todo rework complete function
   private iterateObject(func: (key: IFullPathEntry, value: ISchemaConfigEntry, fullPath: IFullPath) => void) {
     // the complete path were to find the property
     let currentPath: IFullPath = [];
