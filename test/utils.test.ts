@@ -454,4 +454,128 @@ describe('Utils', () => {
     expect((utils).checkLengthProperty({ min: 2 }, true)).to.equal(false);
     expect((utils).checkLengthProperty({ max: 2 }, true)).to.equal(false);
   });
+  it('should return first index of array true', () => {
+    const fullPath = ['test1', { array: true }];
+    const entry = '0';
+    expect(utils.getFirstIndex(fullPath, entry)).to.eql(1);
+  });
+  it('should return -1, because there is no occurence of array true', () => {
+    const fullPath = ['test1', '0'];
+    const entry = '0';
+    expect(utils.getFirstIndex(fullPath, entry)).to.eql(-1);
+  });
+  it('should return first array lengths', () => {
+    const fullPath = ['test1', { array: true }, 'test2', { array: true }];
+    const index = 1;
+    const toTest = {
+      test1: [
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: 1,
+        },
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: 2,
+        },
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: 3,
+        },
+      ], 
+    };
+
+    expect(utils.getLength({
+      fullPath,
+      index,
+      variableToValidate: toTest,
+    })).to.equal(3);
+  });
+  it('should return last array lengths', () => {
+    const fullPath = ['test1', '1', 'test2', { array: true }];
+    const index = 3;
+    const toTest = {
+      test1: [
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: 1,
+        },
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: 2,
+        },
+        {
+          test2: [
+            {
+              testdeep: 'test',
+            },
+          ],
+          test3: 3,
+        },
+      ], 
+    };
+
+    expect(utils.getLength({
+      fullPath,
+      index,
+      variableToValidate: toTest,
+    })).to.equal(3);
+  });
+  it('should return 1 when it can\'t find value', () => {
+    const fullPath = ['test1', '1', 'test2', { array: true }];
+    const index = 3;
+    const toTest = {
+      test1: [
+        {
+          test3: 1,
+        },
+        {
+          test3: 2,
+        },
+        {
+          test3: 3,
+        },
+      ], 
+    };
+
+    expect(utils.getLength({
+      fullPath,
+      index,
+      variableToValidate: toTest,
+    })).to.equal(1);
+  });
 });
