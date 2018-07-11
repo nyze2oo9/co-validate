@@ -227,7 +227,7 @@ export class Utils {
   }
 
   isEmail(email: string): boolean {
-    const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const emailRegExp = /\S+@\S+/;
     return emailRegExp.test(email);
   }
 
@@ -263,7 +263,7 @@ export class Utils {
   }
 
   isTypeWhichRequiresIntegerLength(value: string): boolean {
-    const validTypes = ['string', 'boolean[]', 'number[]', 'integer[]',
+    const validTypes = ['integer', 'string', 'boolean[]', 'number[]', 'integer[]',
       'string[]', 'array'];
     return validTypes.includes(value);
   }
