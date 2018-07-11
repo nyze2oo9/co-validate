@@ -122,8 +122,6 @@ describe('Utils Type Validation', () => {
 
     // email
     expect(utils.checkType('boolean', 'test@test.test')).to.equal(false);
-    expect(utils.checkType('boolean', 'test@test@test.test')).to.equal(false);
-    expect(utils.checkType('boolean', 'test@test,test')).to.equal(false);
     expect(utils.checkType('boolean', 'testtest,test')).to.equal(false);
   });
   it('should be able to validate number correctly', () => {
@@ -242,8 +240,6 @@ describe('Utils Type Validation', () => {
 
     // email
     expect(utils.checkType('number', 'test@test.test')).to.equal(false);
-    expect(utils.checkType('number', 'test@test@test.test')).to.equal(false);
-    expect(utils.checkType('number', 'test@test,test')).to.equal(false);
     expect(utils.checkType('number', 'testtest,test')).to.equal(false);
   });
   it('should be able to validate integers correctly', () => {
@@ -362,8 +358,6 @@ describe('Utils Type Validation', () => {
 
     // email
     expect(utils.checkType('integer', 'test@test.test')).to.equal(false);
-    expect(utils.checkType('integer', 'test@test@test.test')).to.equal(false);
-    expect(utils.checkType('integer', 'test@test,test')).to.equal(false);
     expect(utils.checkType('integer', 'testtest,test')).to.equal(false);
   });
   it('should be able to validate strings correctly', () => {
@@ -482,8 +476,6 @@ describe('Utils Type Validation', () => {
 
     // email
     expect(utils.checkType('string', 'test@test.test')).to.equal(true);
-    expect(utils.checkType('string', 'test@test@test.test')).to.equal(true);
-    expect(utils.checkType('string', 'test@test,test')).to.equal(true);
     expect(utils.checkType('string', 'testtest,test')).to.equal(true);
   });
   it('should be able to validate boolean arrays correctly', () => {
@@ -603,8 +595,6 @@ describe('Utils Type Validation', () => {
 
     // email
     expect(utils.checkType('boolean[]', 'test@test.test')).to.equal(false);
-    expect(utils.checkType('boolean[]', 'test@test@test.test')).to.equal(false);
-    expect(utils.checkType('boolean[]', 'test@test,test')).to.equal(false);
     expect(utils.checkType('boolean[]', 'testtest,test')).to.equal(false);
   });
   it('should be able to validate number arrays correctly', () => {
@@ -724,8 +714,6 @@ describe('Utils Type Validation', () => {
 
     // email
     expect(utils.checkType('number[]', 'test@test.test')).to.equal(false);
-    expect(utils.checkType('number[]', 'test@test@test.test')).to.equal(false);
-    expect(utils.checkType('number[]', 'test@test,test')).to.equal(false);
     expect(utils.checkType('number[]', 'testtest,test')).to.equal(false);
   });
   it('should be able to validate integer arrays correctly', () => {
@@ -845,8 +833,6 @@ describe('Utils Type Validation', () => {
 
     // email
     expect(utils.checkType('integer[]', 'test@test.test')).to.equal(false);
-    expect(utils.checkType('integer[]', 'test@test@test.test')).to.equal(false);
-    expect(utils.checkType('integer[]', 'test@test,test')).to.equal(false);
     expect(utils.checkType('integer[]', 'testtest,test')).to.equal(false);
   });
   it('should be able to validate string arrays correctly', () => {
@@ -966,8 +952,6 @@ describe('Utils Type Validation', () => {
 
     // email
     expect(utils.checkType('string[]', 'test@test.test')).to.equal(false);
-    expect(utils.checkType('string[]', 'test@test@test.test')).to.equal(false);
-    expect(utils.checkType('string[]', 'test@test,test')).to.equal(false);
     expect(utils.checkType('string[]', 'testtest,test')).to.equal(false);
   });
   it('should be able to validate objects correctly', () => {
@@ -1087,8 +1071,6 @@ describe('Utils Type Validation', () => {
 
     // email
     expect(utils.checkType('object', 'test@test.test')).to.equal(false);
-    expect(utils.checkType('object', 'test@test@test.test')).to.equal(false);
-    expect(utils.checkType('object', 'test@test,test')).to.equal(false);
     expect(utils.checkType('object', 'testtest,test')).to.equal(false);
   });
   it('should be able to validate arrays correctly', () => {
@@ -1208,8 +1190,6 @@ describe('Utils Type Validation', () => {
 
     // email
     expect(utils.checkType('array', 'test@test.test')).to.equal(false);
-    expect(utils.checkType('array', 'test@test@test.test')).to.equal(false);
-    expect(utils.checkType('array', 'test@test,test')).to.equal(false);
     expect(utils.checkType('array', 'testtest,test')).to.equal(false);
   });
   it('should be able to validate mongo_id correctly', () => {
@@ -1329,8 +1309,6 @@ describe('Utils Type Validation', () => {
 
     // email
     expect(utils.checkType('mongo_id', 'test@test.test')).to.equal(false);
-    expect(utils.checkType('mongo_id', 'test@test@test.test')).to.equal(false);
-    expect(utils.checkType('mongo_id', 'test@test,test')).to.equal(false);
     expect(utils.checkType('mongo_id', 'testtest,test')).to.equal(false);
   });
   it('should be able to validate emails correctly', () => {
@@ -1450,8 +1428,6 @@ describe('Utils Type Validation', () => {
 
     // email
     expect(utils.checkType('email', 'test@test.test')).to.equal(true);
-    expect(utils.checkType('email', 'test@test@test.test')).to.equal(false);
-    expect(utils.checkType('email', 'test@test,test')).to.equal(false);
     expect(utils.checkType('email', 'testtest,test')).to.equal(false);
   });
 });
