@@ -113,6 +113,7 @@ export class Schema {
   }
 
   validate(variableToValidate: any) {
+    this.validationErrorMessages = [];
     this.schemaConfigValidated = this.fillArrayPaths(variableToValidate);
     for (const schemaConfigEntry of this.schemaConfigValidated) {
       const currentValue = this.utils.getValue((schemaConfigEntry.fullPath as string[]), variableToValidate);
