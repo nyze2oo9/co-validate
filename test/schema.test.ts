@@ -1123,7 +1123,7 @@ describe('Validation works', () => {
         message: 'something went wrong', 
       }]);
   });
-  it.only('should reset everything on new validation', () => {
+  it('should reset everything on new validation', () => {
     const objectDescription: ISchemaConfig =  {
       password: {
         regExp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
