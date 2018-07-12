@@ -847,7 +847,7 @@ describe('Validation works', () => {
 
     testSchema.validate(toTest);
     expect(testSchema.validationErrorMessages).to.eql([{
-      fullPath: ['test1', '1', 'test2', '1', 'testdeep'],
+      fullPath: ['test1', 1, 'test2', 1, 'testdeep'],
       message: 'something went wrong',
     }]);
   });
@@ -1002,7 +1002,7 @@ describe('Validation works', () => {
 
     testSchema.validate(toTest);
     expect(testSchema.validationErrorMessages).to.eql([{
-      fullPath: ['test1', '0', 'test3'],
+      fullPath: ['test1', 0, 'test3'],
       message: 'something went wrong',
     }]);
   });
@@ -1042,7 +1042,7 @@ describe('Validation works', () => {
 
     testSchema.validate(toTest);
     expect(testSchema.validationErrorMessages).to.eql([{
-      fullPath: ['test1', '0', 'test2', '0', 'needed'],
+      fullPath: ['test1', 0, 'test2', 0, 'needed'],
       message: 'something went wrong',
     }]);
   });
@@ -1147,6 +1147,139 @@ describe('Validation works', () => {
     };
     schema.validate(objectToValidate2);
     expect(schema.validationErrorMessages).to.eql([]);
+  });
+  it('should remove unneeded property and copy the needed one to parsedVariable', () => {
+    const objectDescription: ISchemaConfig =  {
+      password: {
+        regExp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
+        required: true,
+      },
+    };
+    const schema = new Schema(objectDescription);
+    
+    const objectToValidate = {
+      username: 'test',
+      password: 'mySecretPassword',
+    };
+    schema.validate(objectToValidate).parse();
+    expect(schema.parsedVariable).to.eql({ 
+      password: 'mySecretPassword',
+    });
+  });
+  it('should remove unneeded properties and copy the needed ones to parsedVariable', () => {
+    const objectDescription: ISchemaConfig =  {
+      test: {
+        type: 'string',
+      },
+      test1: {
+        nested: {
+          test2: {
+            type: 'string',
+          },
+          test3: {
+            type: 'string',
+          },
+        },
+      },
+    };
+    const schema = new Schema(objectDescription);
+    
+    const objectToValidate = {
+      test: 'test',
+      test1: {
+        test2: 'test',
+        test3: 'test',
+        test4: 'test',
+        test5: {
+          test6: 'test',
+          test7: 'test',
+        },
+      },
+      notneed: 'abc',
+    };
+    schema.validate(objectToValidate).parse();
+    expect(schema.parsedVariable).to.eql({ 
+      test: 'test',
+      test1: {
+        test2: 'test',
+        test3: 'test',
+      },
+    });
+  });
+  it('should remove unneeded properties and copy the needed nested objects and arrays to parsedVariable', () => {
+    const objectDescription: ISchemaConfig =  {
+      test: {
+        type: 'string',
+      },
+      test1: {
+        nested: {
+          test2: {
+            type: 'string',
+          },
+          test3: {
+            nested: [
+              {
+                test4: {
+                  type: 'string',
+                },
+                test5: {
+                  type: 'string',
+                },
+              },
+            ],
+          },
+        },
+      },
+    };
+    const schema = new Schema(objectDescription);
+    
+    const objectToValidate = {
+      test: 'test',
+      test1: {
+        test2: 'test',
+        test3: [
+          {
+            test4: 'test',
+            test5: 'test',
+          },
+          {
+            test4: 'test',
+            test5: 'test',
+            notneeded: 'test',
+          },
+          {
+            test4: 'test',
+            test5: 'test',
+          },
+        ],
+        notneeded: {
+          notneeded1: 'test',
+          notneeded2: 'test',
+        },
+      },
+      notneed: 'abc',
+    };
+    schema.validate(objectToValidate).parse();
+    expect(schema.parsedVariable).to.eql({
+      test: 'test',
+      test1: {
+        test2: 'test',
+        test3: [
+          {
+            test4: 'test',
+            test5: 'test',
+          },
+          {
+            test4: 'test',
+            test5: 'test',
+          },
+          {
+            test4: 'test',
+            test5: 'test',
+          },
+        ],
+      },
+    });
   });
 });
 

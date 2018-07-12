@@ -1,9 +1,9 @@
 import { IOptions } from './../interfaces/options';
 import { DEFAULT_OPTIONS } from './../constants/default';
 import { Options } from './options';
-import { Type, ValidValues, IMinOrMax, IMinObject, IMaxObject, IMessageEntry, IWithMessage, ILength, IFullPath, ISchemaConfigEntry } from '../interfaces/schema';
+import { Type, ValidValues, IMinOrMax, IMinObject, IMaxObject, IMessageEntry, IWithMessage, ILength, IUnresolvedFullPath, ISchemaConfigEntry, IFullPath } from '../interfaces/schema';
 import { SchemaConfigEntry } from './schema-config-entry';
-import { IGetNewSchemaConfigEntries, IGetAllLengthsFromEnd, IGetNestedLengths } from '../interfaces/utils';
+import { IGetNewSchemaConfigEntries, IGetAllLengthsFromEnd } from '../interfaces/utils';
 
 export class Utils {
   private _options: Options;
@@ -23,14 +23,14 @@ export class Utils {
   getNewSchemaConfigEntry(params: IGetNewSchemaConfigEntries): SchemaConfigEntry {
     const { schemaConfigEntry, index, pathEntry } = params;
     const newSchemaConfigEntry = this.cloneSchemaConfigEntryInstance(schemaConfigEntry);
-    newSchemaConfigEntry.fullPath[index] = pathEntry.toString();
+    newSchemaConfigEntry.fullPath[index] = pathEntry;
     return newSchemaConfigEntry;
   }
 
   getLength(params: IGetAllLengthsFromEnd): number {
     const { fullPath, index, variableToValidate } = params;
     const path = fullPath.slice(0, index);
-    if (this.isStringArray(path)) {
+    if (this.isStringOrNumberArray(path)) {
       const value = this.getValue(path, variableToValidate);
       if (!this.isNil(value)) {
         return value.length;
@@ -39,10 +39,10 @@ export class Utils {
     return 1;
   }
 
-  getFirstIndex(fullPath: IFullPath, entry: string): number {
+  getFirstIndex(fullPath: IUnresolvedFullPath, entry: string): number {
     for (let i = 0; i < fullPath.length; i += 1) {
       const entry = fullPath[i];
-      if (!this.isString(entry) && entry.array === true) {
+      if (!this.isString(entry) && !this.isNumber(entry) && entry.array === true) {
         return i;
       }
     }
@@ -221,6 +221,18 @@ export class Utils {
     return false;
   }
 
+  isStringOrNumberArray(array: any): array is (string | number)[] {
+    if (this.isArray(array) && array.length > 0) {
+      for (const entry of array) {
+        if (!this.isString(entry) && !this.isNumber(entry)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
   isMongoID(id: any): boolean {
     const mongoIdRegExp = new RegExp('^[0-9a-fA-F]{24}$');
     return mongoIdRegExp.test(id);
@@ -231,11 +243,11 @@ export class Utils {
     return emailRegExp.test(email);
   }
 
-  getValue(path: string[], object: any): any {
+  getValue(path: IFullPath, object: any): any {
     let value = object;
     for (const pathEntry of path) {
-      if (!this.isString(pathEntry)) {
-        throw new Error('path should just contain strings at this point');
+      if (!this.isString(pathEntry) && !this.isNumber(pathEntry)) {
+        throw new Error('path should just contain strings or numbers at this point');
       }
       if (this.isNil(value)) {
         return undefined;
@@ -322,7 +334,7 @@ export class Utils {
     return typeof (value) === 'boolean';
   }
 
-  isNumber(value: any): boolean {
+  isNumber(value: any): value is number {
     return typeof (value) === 'number' && this.checkNaNBasedOnOptions(value) &&
       this.checkInfiteBasedOnOptions(value);
   }

@@ -1,7 +1,6 @@
 import { SchemaConfigEntry } from '../entities/schema-config-entry';
 
 export interface ISchemaConfigEntry {
-  fullPath?: (string | ILength)[];
   type?: type;
   regExp?: reg_exp;
   validValues?: valid_values;
@@ -100,7 +99,7 @@ export interface IWithMessage {
   message: IMessageEntry;
 }
 
-export type SchemaConfigEntries = [IFullPathEntry, ISchemaConfigEntry, number][];
+export type SchemaConfigEntries = [IUnresolvedFullPathEntry, ISchemaConfigEntry, number][];
 
 export type addNestedToSchemaConfigEntriesWithIndexParams = {
   nested: ISchemaConfig | ISchemaConfig[];
@@ -112,5 +111,8 @@ export interface IArrayKey {
   array: boolean;
 }
 
-export type IFullPath = (string | IArrayKey)[];
-export type IFullPathEntry = string | IArrayKey;
+export type IUnresolvedFullPath = IUnresolvedFullPathEntry[];
+export type IUnresolvedFullPathEntry = string | number | IArrayKey;
+
+export type IFullPath = IFullPathEntry[];
+export type IFullPathEntry = string | number;

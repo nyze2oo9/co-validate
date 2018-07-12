@@ -1,18 +1,14 @@
 import { SchemaConfigEntry } from '../entities/schema-config-entry';
-import { IFullPath } from './schema';
+import { IUnresolvedFullPath } from './schema';
 
 export interface IGetNewSchemaConfigEntries {
   schemaConfigEntry: SchemaConfigEntry;
   index: number;
-  pathEntry: string;
+  pathEntry: number;
 }
 
 export interface IGetAllLengthsFromEnd {
-  fullPath: IFullPath;
+  fullPath: IUnresolvedFullPath;
   index: number;
   variableToValidate: any;
-}
-
-export interface IGetNestedLengths {
-  Lenghts: string[];
 }

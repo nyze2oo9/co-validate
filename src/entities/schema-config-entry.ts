@@ -2,18 +2,18 @@ import {
   Type, ITypeValueWithSpecificErrorMessage, IStringValueWithSpecificErrorMessage,
   IRegExpValueWithSpecificErrorMessage, IArrayValueWithSpecificErrorMessage,
   IBooleanValueWithSpecificErrorMessage, INumberValueWithSpecificErrorMessage,
-  IMessageEntry, ISchemaConfig, valid_values, type, reg_exp, required, min, max, RegExpValue, ValidValues, SchemaConfigEntryProperty, message, ILength, IFullPath,
+  IMessageEntry, ISchemaConfig, valid_values, type, reg_exp, required, min, max, RegExpValue, ValidValues, SchemaConfigEntryProperty, message, ILength, IUnresolvedFullPath, IFullPath,
 } from './../interfaces/schema';
 import { Utils } from './utils';
 
 export class SchemaConfigEntry {
   private utils: Utils;
 
-  private _fullPath: IFullPath;
-  public get fullPath(): IFullPath {
+  private _fullPath: IUnresolvedFullPath | IFullPath;
+  public get fullPath(): IUnresolvedFullPath | IFullPath {
     return this._fullPath;
   }
-  public set fullPath(value: IFullPath) {
+  public set fullPath(value: IUnresolvedFullPath | IFullPath) {
     this._fullPath = value;
   }
 

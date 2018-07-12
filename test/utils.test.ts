@@ -578,4 +578,12 @@ describe('Utils', () => {
       variableToValidate: toTest,
     })).to.equal(1);
   });
+  it('should return true, because array is a valid (string|number)[]', () => {
+    const array1 = ['test1', 1, 'test2', 2];
+    expect(utils.isStringOrNumberArray(array1)).to.equal(true);
+    const array2 = [0, 1, 3, 2];
+    expect(utils.isStringOrNumberArray(array2)).to.equal(true);
+    const array3 = ['test1', 'test2'];
+    expect(utils.isStringOrNumberArray(array3)).to.equal(true);
+  });
 });

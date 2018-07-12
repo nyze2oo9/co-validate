@@ -1,4 +1,4 @@
-import { ISchemaConfig, ISchemaConfigEntry, ISchemaConfigValidated, ValidValues, Type, SchemaConfigEntries, addNestedToSchemaConfigEntriesWithIndexParams, IArrayKey, IFullPath, IFullPathEntry } from './../interfaces/schema';
+import { ISchemaConfig, ISchemaConfigEntry, ISchemaConfigValidated, ValidValues, Type, SchemaConfigEntries, addNestedToSchemaConfigEntriesWithIndexParams, IArrayKey, IUnresolvedFullPath, IUnresolvedFullPathEntry, IFullPath } from './../interfaces/schema';
 import { IOptions } from './../interfaces/options';
 import { IError } from './../interfaces/errors';
 import { SchemaConfigEntry } from './schema-config-entry';
@@ -9,7 +9,10 @@ import { Options } from './options';
 export class Schema {
   private schemaConfig: ISchemaConfig;
   private schemaConfigValidated: SchemaConfigEntry[];
-  // private parsedResult: any;
+
+  private variableToValidate: any;
+  parsedVariable: any;
+
   private utils: Utils;
 
   validationErrorMessages: IError[];
@@ -50,7 +53,7 @@ export class Schema {
     if (schemaConfigEntry.typeValue !== undefined) {
       if (!this.utils.checkType(schemaConfigEntry.typeValue, parameter)) {
         this.validationErrorMessages.push({
-          fullPath: schemaConfigEntry.fullPath as string[],
+          fullPath: <IFullPath>schemaConfigEntry.fullPath,
           message: schemaConfigEntry.getErrorMessage(schemaConfigEntry.type),
         });
       }
@@ -61,7 +64,7 @@ export class Schema {
     if (schemaConfigEntry.regExpValue !== undefined) {
       if (!this.utils.checkRegExp(schemaConfigEntry.regExpValue, parameter)) {
         this.validationErrorMessages.push({
-          fullPath: schemaConfigEntry.fullPath as string[],
+          fullPath: <IFullPath>schemaConfigEntry.fullPath,
           message: schemaConfigEntry.getErrorMessage(schemaConfigEntry.regExp),
         });
       }
@@ -72,7 +75,7 @@ export class Schema {
     if (schemaConfigEntry.validValuesValue !== undefined) {
       if (!this.utils.checkValidValue(schemaConfigEntry.validValuesValue, parameter)) {
         this.validationErrorMessages.push({
-          fullPath: schemaConfigEntry.fullPath as string[],
+          fullPath: <IFullPath>schemaConfigEntry.fullPath,
           message: schemaConfigEntry.getErrorMessage(schemaConfigEntry.validValues),
         });
       }
@@ -83,7 +86,7 @@ export class Schema {
     if (schemaConfigEntry.requiredValue !== undefined) {
       if (!this.utils.checkRequired(schemaConfigEntry.requiredValue, parameter)) {
         this.validationErrorMessages.push({
-          fullPath: schemaConfigEntry.fullPath as string[],
+          fullPath: <IFullPath>schemaConfigEntry.fullPath,
           message: schemaConfigEntry.getErrorMessage(schemaConfigEntry.required),
         });
       }
@@ -94,7 +97,7 @@ export class Schema {
     if (schemaConfigEntry.minValue !== undefined) {
       if (!this.utils.checkLengthProperty({ min: schemaConfigEntry.minValue }, parameter)) {
         this.validationErrorMessages.push({
-          fullPath: schemaConfigEntry.fullPath as string[],
+          fullPath: <IFullPath>schemaConfigEntry.fullPath,
           message: schemaConfigEntry.getErrorMessage(schemaConfigEntry.min),
         });
       }
@@ -105,7 +108,7 @@ export class Schema {
     if (schemaConfigEntry.maxValue !== undefined) {
       if (!this.utils.checkLengthProperty({ max: schemaConfigEntry.maxValue }, parameter)) {
         this.validationErrorMessages.push({
-          fullPath: schemaConfigEntry.fullPath as string[],
+          fullPath: <IFullPath>schemaConfigEntry.fullPath,
           message: schemaConfigEntry.getErrorMessage(schemaConfigEntry.max),
         });
       }
@@ -114,9 +117,10 @@ export class Schema {
 
   validate(variableToValidate: any) {
     this.validationErrorMessages = [];
-    this.schemaConfigValidated = this.fillArrayPaths(variableToValidate);
+    this.variableToValidate = variableToValidate;
+    this.schemaConfigValidated = this.fillArrayPaths();
     for (const schemaConfigEntry of this.schemaConfigValidated) {
-      const currentValue = this.utils.getValue((schemaConfigEntry.fullPath as string[]), variableToValidate);
+      const currentValue = this.utils.getValue((<IFullPath>schemaConfigEntry.fullPath), this.variableToValidate);
       this.validateRequired(schemaConfigEntry, currentValue);
       if (!this.utils.isNil(currentValue)) {
         this.validateType(schemaConfigEntry, currentValue);
@@ -129,7 +133,31 @@ export class Schema {
     return this;
   }
 
-  fillArrayPaths(variableToValidate: any) : SchemaConfigEntry[] {
+  parse() {
+    this.parsedVariable = {};
+    for (const schemaConfigEntry of this.schemaConfigValidated) {
+      const currentValue = this.utils.getValue((<IFullPath>schemaConfigEntry.fullPath), this.variableToValidate);
+      this.addToParsedVariable(currentValue, <IFullPath>schemaConfigEntry.fullPath);
+    }
+  }
+
+  private addToParsedVariable(value: any, fullPath: IFullPath) {
+    let parsedVariable = this.parsedVariable;
+    for (let i = 0; i < fullPath.length; i += 1) {
+      const pathEntry = fullPath[i];
+      const isLastPathEntry = (i === fullPath.length - 1);
+      if (this.utils.isNil(parsedVariable[pathEntry] && !isLastPathEntry)) {
+        const isNextEntryAnArrayInstance = (this.utils.isNumber(fullPath[i + 1]));
+        parsedVariable[pathEntry] =  isNextEntryAnArrayInstance ? [] : {};                   
+      }
+      if (isLastPathEntry) {
+        parsedVariable[pathEntry] = value;
+      }
+      parsedVariable = parsedVariable[pathEntry];
+    }
+  }
+
+  fillArrayPaths() : SchemaConfigEntry[] {
     const schemaConfigEntriesWithArrayPath = this.getSchemaConfigEntriesWithArrayPath();
     const newSchemaConfigEntries : SchemaConfigEntry[] = this.getSchemaConfigEntriesWithStringPath();
     while (schemaConfigEntriesWithArrayPath.length) {
@@ -137,7 +165,7 @@ export class Schema {
       if (!this.utils.isNil(currentSchemaConfigEntry)) {
         const currentIndex = this.utils.getFirstIndex(currentSchemaConfigEntry.fullPath, '0');
         const arrayLength = this.utils.getLength({
-          variableToValidate,
+          variableToValidate: this.variableToValidate,
           fullPath: currentSchemaConfigEntry.fullPath,
           index: currentIndex,
         });
@@ -145,9 +173,9 @@ export class Schema {
           const newSchemaConfigEntry = this.utils.getNewSchemaConfigEntry({
             schemaConfigEntry: currentSchemaConfigEntry,
             index: currentIndex,
-            pathEntry: i.toString(),
+            pathEntry: i,
           });
-          if (this.utils.isStringArray(newSchemaConfigEntry.fullPath)) {
+          if (this.utils.isStringOrNumberArray(newSchemaConfigEntry.fullPath)) {
             newSchemaConfigEntries.push(newSchemaConfigEntry);
           } else {
             schemaConfigEntriesWithArrayPath.push(newSchemaConfigEntry);
@@ -162,7 +190,7 @@ export class Schema {
     const result : SchemaConfigEntry[] = [];
     for (const schemaConfigEntry of this.schemaConfigValidated) {
       for (const pathEntry of schemaConfigEntry.fullPath) {
-        if (!this.utils.isString(pathEntry) && pathEntry.array === true) {
+        if (!this.utils.isString(pathEntry) && !this.utils.isNumber(pathEntry) && pathEntry.array === true) {
           result.push(schemaConfigEntry);
           break;
         }
@@ -181,9 +209,10 @@ export class Schema {
     return result;
   }
 
-  private iterateObject(func: (key: IFullPathEntry, value: ISchemaConfigEntry, fullPath: IFullPath) => void) {
+  private iterateObject(func: (key: IUnresolvedFullPathEntry, value: ISchemaConfigEntry, fullPath: IUnresolvedFullPath)
+   => void) {
     // the complete path were to find the property
-    let currentPath: IFullPath = [];
+    let currentPath: IUnresolvedFullPath = [];
     // the index for the path
     let currentPathIndex = 0;
     // get key an values of the schemaConfig
@@ -240,7 +269,8 @@ SchemaConfigEntries {
     return nestedWithIndex.concat(schemaConfigEntriesWithIndex);
   }
 
-  private updateCurrentPath(path: IFullPath, index: number, key: IFullPathEntry): IFullPath {
+  private updateCurrentPath(path: IUnresolvedFullPath, index: number, key: IUnresolvedFullPathEntry): 
+  IUnresolvedFullPath {
     path[index] = key;
     return path.slice(0, index + 1);
   }

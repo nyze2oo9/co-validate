@@ -1,4 +1,6 @@
+import { IFullPath } from './schema';
+
 export interface IError {
-  fullPath: string[];
+  fullPath: IFullPath;
   message: string;
 }
