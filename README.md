@@ -16,6 +16,7 @@ A library for validating objects.
 * Validates also deeply nested objects and arrays.
 * configurable validation messages
 * configurable validation options
+* Writen in TypeScript (Types are included)
 
 ## Installation
 
@@ -26,7 +27,10 @@ Soon possible via NPM
 In the following example, you can see a basic example for a login data validation.
 Create a Schema instance with the object description.
 
+### JavaScript (Validate)
 ```js
+const coValidate = require('co-validate');
+
 const objectDescription =  {
   username: {
     type: 'string', // username needs to be a string
@@ -35,7 +39,55 @@ const objectDescription =  {
     required: true // username need to be set
   },
   password: {
-    regExp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/ // this regExp will be used for testing
+    regExp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, // this regExp will be used for testing
+    required: true // password need to be set
+  }
+};
+const schema = new coValidate.Schema(objectDescription);
+
+const objectToValidate1 = {
+  username: 'myUsername',
+  password: 'mySecretPassword1'
+}
+schema.validate(objectToValidate1);
+if (schema.validationErrorMessages.length > 0) {
+  // will not get called
+} else {
+  // will get called
+  // everything is fine
+}
+
+const objectToValidate2 = {
+  username: 'myUsername',
+  password: 'mySecretPassword'
+}
+schema.validate(objectToValidate2);
+if (schema.validationErrorMessages.length > 0) {
+  // will get called
+  // [
+  // {
+  //    fullPath: ['password']
+  //    message: 'something went wrong' // this is the fallback message
+  // }
+  // ]
+} else {
+  // will not get called
+}
+```
+
+### TypeScript (Validate)
+```ts
+import { Schema } from 'co-validate';
+
+const objectDescription : ISchemaConfigEntry =  {
+  username: {
+    type: 'string', // username needs to be a string
+    min: 4, // username can't be shorter than 4 characters
+    max: 64, // username can't be longer than 64 characters
+    required: true // username need to be set
+  },
+  password: {
+    regExp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, // this regExp will be used for testing
     required: true // password need to be set
   }
 };
@@ -71,7 +123,82 @@ if (schema.validationErrorMessages.length > 0) {
 }
 ```
 
-### API
+### JavaScript (Validate & Parse)
+```js
+const coValidate = require('co-validate');
+
+const objectDescription =  {
+  username: {
+    type: 'string', // username needs to be a string
+    min: 4, // username can't be shorter than 4 characters
+    max: 64, // username can't be longer than 64 characters
+    required: true // username need to be set
+  },
+  password: {
+    regExp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, // this regExp will be used for testing
+    required: true // password need to be set
+  }
+};
+const schema = new coValidate.Schema(objectDescription);
+
+const objectToValidate1 = {
+  username: 'myUsername',
+  password: 'mySecretPassword1',
+  notneeded: 'should not be here' // a property which shouldn't be there
+}
+schema.validate(objectToValidate1).parse();
+if (schema.validationErrorMessages.length > 0) {
+  // will not get called
+} else {
+  // will get called
+  // everything is fine
+  // from now on use schema.parsedVariable, because it only contains the specified properties and removes everything else.
+  // schema.parsedVariable = {
+  //  username: 'myUsername',
+  //  password: 'mySecretPassword1'
+  // }
+}
+...
+```
+
+### TypeScript (Validate & Parse)
+```ts
+import { Schema } from 'co-validate';
+
+const objectDescription : ISchemaConfigEntry =  { // using the ISchemaConfigEntry interface will help you to define the Schema
+  username: {
+    type: 'string', // username needs to be a string
+    min: 4, // username can't be shorter than 4 characters
+    max: 64, // username can't be longer than 64 characters
+    required: true // username need to be set
+  },
+  password: {
+    regExp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, // this regExp will be used for testing
+    required: true // password need to be set
+  }
+};
+const schema = new Schema(objectDescription);
+
+const objectToValidate1 = {
+  username: 'myUsername',
+  password: 'mySecretPassword1',
+  notneeded: 'should not be here' // a property which shouldn't be there
+}
+schema.validate(objectToValidate1).parse();
+if (schema.validationErrorMessages.length > 0) {
+  // will not get called
+} else {
+  // will get called
+  // everything is fine
+  // from now on use schema.parsedVariable, because it only contains the specified properties and removes everything else.
+  // schema.parsedVariable = {
+  //  username: 'myUsername',
+  //  password: 'mySecretPassword1'
+  // }
+}
+```
+
+### Schema Properties
 
 | Properties | Description |
 |------------|-------------|
@@ -106,7 +233,6 @@ if (schema.validationErrorMessages.length > 0) {
 | **nested** (**Can't** be set in combination with type, regExp, validValues, required, min and max) |
 | `nested = { NESTED OBEJCT}` | This property is for setting the nested object  |
 | `nested = [{ NESTED ARRAY OF OBJECTS}]`| It's also possible to set an array of objects for the nested property |
-
 
 ### Validation Messsages
 All the API properties can be objects with messages.
