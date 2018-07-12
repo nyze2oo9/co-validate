@@ -215,7 +215,7 @@ describe('Validation works', () => {
   it('should return error message because value is not matchin regexp', () => {
     const testSchema = new Schema({
       test1: {
-        reg_exp: /ab+c/i,
+        regExp: /ab+c/i,
         message: 'error message',
       },
     });
@@ -230,7 +230,7 @@ describe('Validation works', () => {
      () => {
        const testSchema = new Schema({
          test1: {
-           reg_exp: /ab+c/i,
+           regExp: /ab+c/i,
          },
        });
        testSchema.validate({ test1: 'abd' });
@@ -243,7 +243,7 @@ describe('Validation works', () => {
   it('should return error message from regExp object, because value is not matching regExp', () => {
     const testSchema = new Schema({
       test1: {
-        reg_exp: {
+        regExp: {
           value: /ab+c/i,
           message: 'error message',
         },
@@ -259,7 +259,7 @@ describe('Validation works', () => {
   it('should return german error message from RegExp object, because value is not matching regExp', () => {
     const schema: ISchemaConfig = {
       test1: {
-        reg_exp: {
+        regExp: {
           value: /ab+c/i,
           message: {
             de: 'german error message',
@@ -284,7 +284,7 @@ describe('Validation works', () => {
   it('should return german error message from message property, because value is not matching regExp', () => {
     const schema: ISchemaConfig = {
       test1: {
-        reg_exp: /ab+c/i,
+        regExp: /ab+c/i,
         message: {
           de: 'german error message',
           en: 'english error message',
@@ -307,7 +307,7 @@ describe('Validation works', () => {
   it('shouldn\'t return error messages because value is matching regExp', () => {
     const testSchema = new Schema({
       test1: {
-        reg_exp: /ab+c/i,
+        regExp: /ab+c/i,
         message: 'error message',
       },
     });
@@ -317,7 +317,7 @@ describe('Validation works', () => {
   it('should return error message, because value is not in validValues', () => {
     const testSchema = new Schema({
       test1: {
-        valid_values: [1,2,3],
+        validValues: [1,2,3],
         message: 'error message',
       },
     });
@@ -332,7 +332,7 @@ describe('Validation works', () => {
      () => {
        const testSchema = new Schema({
          test1: {
-           valid_values: [1,2,3],
+           validValues: [1,2,3],
          },
        });
        testSchema.validate({ test1: 4 });
@@ -345,7 +345,7 @@ describe('Validation works', () => {
   it('should return error message from validValues object, because value is not in validValues', () => {
     const testSchema = new Schema({
       test1: {
-        valid_values: {
+        validValues: {
           value: [1,2,3],
           message: 'error message',
         },
@@ -361,7 +361,7 @@ describe('Validation works', () => {
   it('should return german error message from validValues object, because value is not in validValues', () => {
     const schema: ISchemaConfig = {
       test1: {
-        valid_values: {
+        validValues: {
           value: [1,2,3],
           message: {
             de: 'german error message',
@@ -386,7 +386,7 @@ describe('Validation works', () => {
   it('should return german error message from message property, because value is not in validValues', () => {
     const schema: ISchemaConfig = {
       test1: {
-        valid_values: [1,2,3],
+        validValues: [1,2,3],
         message: {
           de: 'german error message',
           en: 'english error message',
@@ -409,7 +409,7 @@ describe('Validation works', () => {
   it('shouldn\'t return error messages because value is incluced by validValues', () => {
     const testSchema = new Schema({
       test1: {
-        valid_values: [1,2,3],
+        validValues: [1,2,3],
         message: 'error message',
       },
     });
@@ -1122,6 +1122,31 @@ describe('Validation works', () => {
         fullPath: ['test1'],
         message: 'something went wrong', 
       }]);
+  });
+  it.only('should reset everything on new validation', () => {
+    const objectDescription: ISchemaConfig =  {
+      password: {
+        regExp: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
+        required: true,
+      },
+    };
+    const schema = new Schema(objectDescription);
+    
+    const objectToValidate1 = {
+      password: 'mySecretPassword',
+    };
+    schema.validate(objectToValidate1);
+    expect(schema.validationErrorMessages).to.eql([
+      { 
+        fullPath: ['password'],
+        message: 'something went wrong', 
+      }]);
+    
+    const objectToValidate2 = {
+      password: 'mySecretPassword1',
+    };
+    schema.validate(objectToValidate2);
+    expect(schema.validationErrorMessages).to.eql([]);
   });
 });
 

@@ -3,8 +3,8 @@ import { SchemaConfigEntry } from '../entities/schema-config-entry';
 export interface ISchemaConfigEntry {
   fullPath?: (string | ILength)[];
   type?: type;
-  reg_exp?: reg_exp;
-  valid_values?: valid_values;
+  regExp?: reg_exp;
+  validValues?: valid_values;
   required?: required;
   min?: min;
   max?: max;

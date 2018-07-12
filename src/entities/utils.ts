@@ -16,7 +16,7 @@ export class Utils {
   }
 
   isSchemaConfigEntryNeeded(schemaConfigEntry: ISchemaConfigEntry) {
-    const neededKeys = ['type', 'reg_exp', 'valid_values', 'required', 'min', 'max'];
+    const neededKeys = ['type', 'regExp', 'validValues', 'required', 'min', 'max'];
     return Object.keys(schemaConfigEntry).some(key => neededKeys.includes(key));
   }
 

@@ -35,8 +35,8 @@ export class Schema {
     if (this.utils.isSchemaConfigEntryNeeded(schemaConfigEntry)) {
       schemaConfigEntryValidated.fullPath = fullPath;
       schemaConfigEntryValidated.type = schemaConfigEntry.type;
-      schemaConfigEntryValidated.regExp = schemaConfigEntry.reg_exp;
-      schemaConfigEntryValidated.validValues = schemaConfigEntry.valid_values;
+      schemaConfigEntryValidated.regExp = schemaConfigEntry.regExp;
+      schemaConfigEntryValidated.validValues = schemaConfigEntry.validValues;
       schemaConfigEntryValidated.required = schemaConfigEntry.required;
       schemaConfigEntryValidated.min = schemaConfigEntry.min;
       schemaConfigEntryValidated.max = schemaConfigEntry.max;
