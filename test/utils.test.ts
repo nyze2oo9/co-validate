@@ -1,6 +1,7 @@
 import * as chai from 'chai';
 import { Utils } from '../src/entities/utils';
 import { Options } from '../src/entities/options';
+import { SchemaConfigEntry } from '../src/entities/schema-config-entry';
 
 const expect = chai.expect;
 
@@ -298,6 +299,23 @@ describe('Utils', () => {
     const testPath = ['test1', 'test2', 'test3'];
     expect(utils.getValue(testPath, testObject)).to.equal('test');
   });
+  it('should throw error when fullPath is not a (string | number)[]', () => {
+    const message = 'path should just contain strings or numbers at this point';
+
+    const testPath = ['test1', 'test2', 'test3', { array : true }];
+    const testObject = {
+      test1: {
+        test2: {
+          test3: 'test',
+        },
+      },
+    };
+
+    const errorFunction = () => {
+      utils.getValue(<any>testPath, testObject);
+    };
+    expect(errorFunction).to.throw(message);
+  });
   it('should return true if it\'s not NaN and allowNaN is false', () => {
     expect(utils.checkNaNBasedOnOptions(1)).to.equal(true);
   });
@@ -585,5 +603,613 @@ describe('Utils', () => {
     expect(utils.isStringOrNumberArray(array2)).to.equal(true);
     const array3 = ['test1', 'test2'];
     expect(utils.isStringOrNumberArray(array3)).to.equal(true);
+  });
+  it('should return false, because array isn\'t a valid (string|number)[]', () => {
+    const array = ['test1', { array : true }, 'test2', 2];
+    expect(utils.isStringOrNumberArray(array)).to.equal(false);
+  });
+  it('should only copy the reference of the object and both object should contain the same type value', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.type = 'string';
+    const newSchemaConfigEntry = schemaConfigEntry;
+    newSchemaConfigEntry.type = 'number';
+    expect(schemaConfigEntry.type).to.eql('number');
+    expect(newSchemaConfigEntry.type).to.eql('number');
+  });
+  it('should return complete cloned schema config entry class with values only (type)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.fullPath = ['test1', 'test2', 0];
+    schemaConfigEntry.type = 'string';
+    schemaConfigEntry.required = true;
+    schemaConfigEntry.min = 4;
+    schemaConfigEntry.max = 64;
+    schemaConfigEntry.message = 'test message';
+
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    expect(newSchemaConfigEntry.fullPath).to.eql(['test1', 'test2', 0]);
+    expect(newSchemaConfigEntry.type).to.eql('string');
+    expect(newSchemaConfigEntry.required).to.eql(true);
+    expect(newSchemaConfigEntry.min).to.eql(4);
+    expect(newSchemaConfigEntry.max).to.eql(64);
+    expect(newSchemaConfigEntry.message).to.eql('test message');
+  });
+  it('should return complete cloned schema config entry class with values only (regExp)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.fullPath = ['test1', 'test2', 0];
+    schemaConfigEntry.regExp = /ab/i;
+
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    expect(newSchemaConfigEntry.fullPath).to.eql(['test1', 'test2', 0]);
+    expect(newSchemaConfigEntry.regExp).to.eql(/ab/i);
+  });
+  it('should return complete cloned schema config entry class with values only (validValues)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.fullPath = ['test1', 'test2', 0];
+    schemaConfigEntry.validValues = [1,2,3];
+
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    expect(newSchemaConfigEntry.fullPath).to.eql(['test1', 'test2', 0]);
+    expect(newSchemaConfigEntry.validValues).to.eql([1,2,3]);
+  });
+  it('should return complete cloned schema config entry class with values only (nested)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.fullPath = ['test1', 'test2', 0];
+    schemaConfigEntry.nested = [
+      {
+        test1: {
+          type: 'string',
+        },
+      },
+    ];
+
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    expect(newSchemaConfigEntry.fullPath).to.eql(['test1', 'test2', 0]);
+    expect(newSchemaConfigEntry.nested).to.eql([
+      {
+        test1: {
+          type: 'string',
+        },
+      },
+    ]);
+  });
+  it('should return complete cloned schema config entry class with simple value and mesages', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.fullPath = ['test1', 'test2', 0];
+    schemaConfigEntry.type = {
+      value: 'string',
+      message: 'test message',
+    };
+    schemaConfigEntry.required = {
+      value: true,
+      message: 'test message',
+    };
+    schemaConfigEntry.min = {
+      value: 4,
+      message: 'test message',
+    };
+    schemaConfigEntry.max = {
+      value: 64,
+      message: 'test message',
+    };
+    
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    expect(newSchemaConfigEntry.fullPath).to.eql(['test1', 'test2', 0]);
+    expect(newSchemaConfigEntry.type).to.eql({
+      value: 'string',
+      message: 'test message',
+    });
+    expect(newSchemaConfigEntry.required).to.eql({
+      value: true,
+      message: 'test message',
+    });
+    expect(newSchemaConfigEntry.min).to.eql({
+      value: 4,
+      message: 'test message',
+    });
+    expect(newSchemaConfigEntry.max).to.eql({
+      value: 64,
+      message: 'test message',
+    });
+  });
+  it('should return complete cloned schema config entry class with simple value and mesages (regExp)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.fullPath = ['test1', 'test2', 0];
+    schemaConfigEntry.regExp = {
+      value: /ab/i,
+      message: 'test message',
+    };
+
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    expect(newSchemaConfigEntry.fullPath).to.eql(['test1', 'test2', 0]);
+    expect(newSchemaConfigEntry.regExp).to.eql({
+      value: /ab/i,
+      message: 'test message',
+    });
+  });
+  it('should return complete cloned schema config entry class with simple value and mesages (validValues)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.fullPath = ['test1', 'test2', 0];
+    schemaConfigEntry.validValues = {
+      value: [1,2,3],
+      message: 'test message',
+    };
+
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    expect(newSchemaConfigEntry.fullPath).to.eql(['test1', 'test2', 0]);
+    expect(newSchemaConfigEntry.validValues).to.eql({
+      value: [1,2,3],
+      message: 'test message',
+    });
+  });
+  it('should return complete cloned schema config entry class with complex value and mesages', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.fullPath = ['test1', 'test2', 0];
+    schemaConfigEntry.type = {
+      value: 'string',
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    };
+    schemaConfigEntry.required = {
+      value: true,
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    };
+    schemaConfigEntry.min = {
+      value: 4,
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    };
+    schemaConfigEntry.max = {
+      value: 64,
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    };
+    
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    expect(newSchemaConfigEntry.fullPath).to.eql(['test1', 'test2', 0]);
+    expect(newSchemaConfigEntry.type).to.eql({
+      value: 'string',
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    });
+    expect(newSchemaConfigEntry.required).to.eql({
+      value: true,
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    });
+    expect(newSchemaConfigEntry.min).to.eql({
+      value: 4,
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    });
+    expect(newSchemaConfigEntry.max).to.eql({
+      value: 64,
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    });
+  });
+  it('should return complete cloned schema config entry class with complex value and mesages (regExp)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.fullPath = ['test1', 'test2', 0];
+    schemaConfigEntry.regExp = {
+      value: /ab/i,
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    };
+
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    expect(newSchemaConfigEntry.fullPath).to.eql(['test1', 'test2', 0]);
+    expect(newSchemaConfigEntry.regExp).to.eql({
+      value: /ab/i,
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    });
+  });
+  it('should return complete cloned schema config entry class with complex value and mesages (validValues)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.fullPath = ['test1', 'test2', 0];
+    schemaConfigEntry.validValues = {
+      value: [1,2,3],
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    };
+
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    expect(newSchemaConfigEntry.fullPath).to.eql(['test1', 'test2', 0]);
+    expect(newSchemaConfigEntry.validValues).to.eql({
+      value: [1,2,3],
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    });
+  });
+  it('should return cloned schema config entry class (property: type as a string)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.type = 'string';
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.type = 'number';
+    expect(schemaConfigEntry.type).to.eql('string');
+    expect(newSchemaConfigEntry.type).to.eql('number');
+  });
+  it('should return cloned schema config entry class (property: type as a type with normal error message)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.type = {
+      value: 'string',
+      message: 'first error message',
+    };
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.type = {
+      value: 'number',
+      message: 'second error message',
+    };
+    expect(schemaConfigEntry.type).to.eql({
+      value: 'string',
+      message: 'first error message',
+    });
+    expect(newSchemaConfigEntry.type).to.eql({
+      value: 'number',
+      message: 'second error message',
+    });
+  });
+  it('should return cloned schema config entry class (property: type as a type with multi error message)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.type = {
+      value: 'string',
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    };
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.type = {
+      value: 'number',
+      message: {
+        de: 'second german error message',
+        en: 'second english error message',
+      },
+    };
+    expect(schemaConfigEntry.type).to.eql({
+      value: 'string',
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    });
+    expect(newSchemaConfigEntry.type).to.eql({
+      value: 'number',
+      message: {
+        de: 'second german error message',
+        en: 'second english error message',
+      },
+    });
+  });
+  it('should return cloned schema config entry class (property: regExp as a regExp)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.regExp = /ab+c/i;
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.regExp = /ab/i;
+    expect(schemaConfigEntry.regExp).to.eql(/ab+c/i);
+    expect(newSchemaConfigEntry.regExp).to.eql(/ab/i);
+  });
+  it('should return cloned schema config entry class (property: regExp as a regExp with normal error message)',
+     () => {
+       const schemaConfigEntry = new SchemaConfigEntry(utils);
+       schemaConfigEntry.regExp = {
+         value: /ab+c/i,
+         message: 'first error message',
+       };
+       const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+       newSchemaConfigEntry.regExp = {
+         value: /ab/i,
+         message: 'second error message',
+       };
+       expect(schemaConfigEntry.regExp).to.eql({
+         value: /ab+c/i,
+         message: 'first error message',
+       });
+       expect(newSchemaConfigEntry.regExp).to.eql({
+         value: /ab/i,
+         message: 'second error message',
+       });
+     });
+  it('should return cloned schema config entry class (property: regExp as a regExp with multi error message)',
+     () => {
+       const schemaConfigEntry = new SchemaConfigEntry(utils);
+       schemaConfigEntry.regExp = {
+         value: /ab+c/i,
+         message: {
+           de: 'first german error message',
+           en: 'first english error message',
+         },
+       };
+       const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+       newSchemaConfigEntry.regExp = {
+         value: /ab/i,
+         message: {
+           de: 'second german error message',
+           en: 'second english error message',
+         },
+       };
+       expect(schemaConfigEntry.regExp).to.eql({
+         value: /ab+c/i,
+         message: {
+           de: 'first german error message',
+           en: 'first english error message',
+         },
+       });
+       expect(newSchemaConfigEntry.regExp).to.eql({
+         value: /ab/i,
+         message: {
+           de: 'second german error message',
+           en: 'second english error message',
+         },
+       });
+     });
+  it('should return cloned schema config entry class (property: validValues as a string)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.validValues = [1,2];
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.validValues = [3,4];
+    expect(schemaConfigEntry.validValues).to.eql([1,2]);
+    expect(newSchemaConfigEntry.validValues).to.eql([3,4]);
+  });
+  it('should return cloned schema config entry (property: validValues as a validValues with normal error message)',
+     () => {
+       const schemaConfigEntry = new SchemaConfigEntry(utils);
+       schemaConfigEntry.validValues = {
+         value: [1,2],
+         message: 'first error message',
+       };
+       const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+       newSchemaConfigEntry.validValues = {
+         value: [3,4],
+         message: 'second error message',
+       };
+       expect(schemaConfigEntry.validValues).to.eql({
+         value: [1,2],
+         message: 'first error message',
+       });
+       expect(newSchemaConfigEntry.validValues).to.eql({
+         value: [3,4],
+         message: 'second error message',
+       });
+     });
+  it('should return cloned schema config entry (property: validValues as a validValues with multi error message)',
+     () => {
+       const schemaConfigEntry = new SchemaConfigEntry(utils);
+       schemaConfigEntry.validValues = {
+         value: [1,2],
+         message: {
+           de: 'first german error message',
+           en: 'first english error message',
+         },
+       };
+       const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+       newSchemaConfigEntry.validValues = {
+         value: [3,4],
+         message: {
+           de: 'second german error message',
+           en: 'second english error message',
+         },
+       };
+       expect(schemaConfigEntry.validValues).to.eql({
+         value: [1,2],
+         message: {
+           de: 'first german error message',
+           en: 'first english error message',
+         },
+       });
+       expect(newSchemaConfigEntry.validValues).to.eql({
+         value: [3,4],
+         message: {
+           de: 'second german error message',
+           en: 'second english error message',
+         },
+       });
+     });
+  it('should return cloned schema config entry class (property: required as a string)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.required = true;
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.required = false;
+    expect(schemaConfigEntry.required).to.eql(true);
+    expect(newSchemaConfigEntry.required).to.eql(false);
+  });
+  it('should return cloned schema config entry class (property: required as a required with normal error message)',
+     () => {
+       const schemaConfigEntry = new SchemaConfigEntry(utils);
+       schemaConfigEntry.required = {
+         value: true,
+         message: 'first error message',
+       };
+       const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+       newSchemaConfigEntry.required = {
+         value: false,
+         message: 'second error message',
+       };
+       expect(schemaConfigEntry.required).to.eql({
+         value: true,
+         message: 'first error message',
+       });
+       expect(newSchemaConfigEntry.required).to.eql({
+         value: false,
+         message: 'second error message',
+       });
+     });
+  it('should return cloned schema config entry class (property: required as a required with multi error message)',
+     () => {
+       const schemaConfigEntry = new SchemaConfigEntry(utils);
+       schemaConfigEntry.required = {
+         value: true,
+         message: {
+           de: 'first german error message',
+           en: 'first english error message',
+         },
+       };
+       const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+       newSchemaConfigEntry.required = {
+         value: false,
+         message: {
+           de: 'second german error message',
+           en: 'second english error message',
+         },
+       };
+       expect(schemaConfigEntry.required).to.eql({
+         value: true,
+         message: {
+           de: 'first german error message',
+           en: 'first english error message',
+         },
+       });
+       expect(newSchemaConfigEntry.required).to.eql({
+         value: false,
+         message: {
+           de: 'second german error message',
+           en: 'second english error message',
+         },
+       });
+     });
+  it('should return cloned schema config entry class (property: min as a number)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.min = 1;
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.min = 2;
+    expect(schemaConfigEntry.min).to.eql(1);
+    expect(newSchemaConfigEntry.min).to.eql(2);
+  });
+  it('should return cloned schema config entry class (property: min as a min with normal error message)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.min = {
+      value: 1,
+      message: 'first error message',
+    };
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.min = {
+      value: 2,
+      message: 'second error message',
+    };
+    expect(schemaConfigEntry.min).to.eql({
+      value: 1,
+      message: 'first error message',
+    });
+    expect(newSchemaConfigEntry.min).to.eql({
+      value: 2,
+      message: 'second error message',
+    });
+  });
+  it('should return cloned schema config entry class (property: min as a min with multi error message)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.min = {
+      value: 1,
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    };
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.min = {
+      value: 2,
+      message: {
+        de: 'second german error message',
+        en: 'second english error message',
+      },
+    };
+    expect(schemaConfigEntry.min).to.eql({
+      value: 1,
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    });
+    expect(newSchemaConfigEntry.min).to.eql({
+      value: 2,
+      message: {
+        de: 'second german error message',
+        en: 'second english error message',
+      },
+    });
+  });
+  it('should return cloned schema config entry class (property: max as a number)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.max = 1;
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.max = 2;
+    expect(schemaConfigEntry.max).to.eql(1);
+    expect(newSchemaConfigEntry.max).to.eql(2);
+  });
+  it('should return cloned schema config entry class (property: max as a max with normal error message)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.max = {
+      value: 1,
+      message: 'first error message',
+    };
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.max = {
+      value: 2,
+      message: 'second error message',
+    };
+    expect(schemaConfigEntry.max).to.eql({
+      value: 1,
+      message: 'first error message',
+    });
+    expect(newSchemaConfigEntry.max).to.eql({
+      value: 2,
+      message: 'second error message',
+    });
+  });
+  it('should return cloned schema config entry class (property: max as a max with multi error message)', () => {
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.max = {
+      value: 1,
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    };
+    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    newSchemaConfigEntry.max = {
+      value: 2,
+      message: {
+        de: 'second german error message',
+        en: 'second english error message',
+      },
+    };
+    expect(schemaConfigEntry.max).to.eql({
+      value: 1,
+      message: {
+        de: 'first german error message',
+        en: 'first english error message',
+      },
+    });
+    expect(newSchemaConfigEntry.max).to.eql({
+      value: 2,
+      message: {
+        de: 'second german error message',
+        en: 'second english error message',
+      },
+    });
   });
 });

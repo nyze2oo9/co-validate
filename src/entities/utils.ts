@@ -1,9 +1,9 @@
 import { IOptions } from './../interfaces/options';
 import { DEFAULT_OPTIONS } from './../constants/default';
 import { Options } from './options';
-import { Type, ValidValues, IMinOrMax, IMinObject, IMaxObject, IMessageEntry, IWithMessage, ILength, IUnresolvedFullPath, ISchemaConfigEntry, IFullPath } from '../interfaces/schema';
+import { Type, ValidValues, IMinOrMax, IMinObject, IMaxObject, IMessageEntry, IWithMessage, ILength, IUnresolvedFullPath, ISchemaConfigEntry, IFullPath, ITypeValueWithSpecificErrorMessage, IPropertyWithSpecificErrorMessage } from '../interfaces/schema';
 import { SchemaConfigEntry } from './schema-config-entry';
-import { IGetNewSchemaConfigEntries, IGetAllLengthsFromEnd } from '../interfaces/utils';
+import { IGetNewSchemaConfigEntries, IGetAllLengthsFromEnd, ICloneSchemaConfigEntryProperty, CloneSchemaConfigEntryKeys } from '../interfaces/utils';
 
 export class Utils {
   private _options: Options;
@@ -52,23 +52,13 @@ export class Utils {
   cloneSchemaConfigEntryInstance(schemaConfigEntry: SchemaConfigEntry): SchemaConfigEntry {
     const newSchemaConfigEntry = new SchemaConfigEntry(this);
     newSchemaConfigEntry.fullPath = schemaConfigEntry.fullPath.slice(0);
-    if (!this.isNil(schemaConfigEntry.type)) {
-      newSchemaConfigEntry.type = JSON.parse(JSON.stringify(schemaConfigEntry.type));
-    }
-    if (!this.isNil(schemaConfigEntry.regExp)) {
-      newSchemaConfigEntry.regExp = JSON.parse(JSON.stringify(schemaConfigEntry.regExp));
-    }
-    if (!this.isNil(schemaConfigEntry.validValues)) {
-      newSchemaConfigEntry.validValues = JSON.parse(JSON.stringify(schemaConfigEntry.validValues));
-    }
-    if (!this.isNil(schemaConfigEntry.required)) {
-      newSchemaConfigEntry.required = JSON.parse(JSON.stringify(schemaConfigEntry.required));
-    }
-    if (!this.isNil(schemaConfigEntry.min)) {
-      newSchemaConfigEntry.min = JSON.parse(JSON.stringify(schemaConfigEntry.min));
-    }
-    if (!this.isNil(schemaConfigEntry.max)) {
-      newSchemaConfigEntry.max = JSON.parse(JSON.stringify(schemaConfigEntry.max));
+    const keys : CloneSchemaConfigEntryKeys[] = ['type', 'regExp', 'validValues', 'required', 'min', 'max'];
+    for (const key of keys) {
+      this.cloneSchemaConfigEntryProperty({
+        schemaConfigEntry,
+        newSchemaConfigEntry,
+        propertyKey: key,
+      });
     }
     if (!this.isNil(schemaConfigEntry.message)) {
       newSchemaConfigEntry.message = JSON.parse(JSON.stringify(schemaConfigEntry.message));
@@ -77,6 +67,28 @@ export class Utils {
       newSchemaConfigEntry.nested = JSON.parse(JSON.stringify(schemaConfigEntry.nested));
     }
     return newSchemaConfigEntry;
+  }
+
+  cloneSchemaConfigEntryProperty(params: ICloneSchemaConfigEntryProperty) {
+    const { schemaConfigEntry, newSchemaConfigEntry, propertyKey } = params;
+    const property = schemaConfigEntry[propertyKey];
+    let newProperty = newSchemaConfigEntry[propertyKey];
+    if (!this.isNil(property)) {
+      if (!this.isPropertyWithSpecificErrorMessage(property)) {
+        newProperty = this.isValueType(property) ? property : property.slice(0);
+      }
+      if (this.isPropertyWithSpecificErrorMessage(property)) {
+        newProperty = <IPropertyWithSpecificErrorMessage>{};
+        newProperty.value = this.isValueType(property.value) ? property.value : property.value.slice(0);
+        newProperty.message = this.isMessageObject(property.message) ? Object.assign({}, property.message) :
+         property.message;
+      }
+    }
+    newSchemaConfigEntry[propertyKey] = newProperty;
+  }
+
+  isValueType(value: any): value is boolean | number | string | RegExp {
+    return this.isBoolean(value) || this.isNumber(value) || this.isType(value) || this.isRegExp(value);
   }
 
   checkLengthProperty(params: IMinOrMax, parameter: any): boolean {
@@ -290,7 +302,7 @@ export class Utils {
     return false;
   }
 
-  isValidValuesArray(value: any): boolean {
+  isValidValuesArray(value: any): value is ValidValues {
     if (this.isArray(value)) {
       for (const validValue of value) {
         if (!this.isBoolean(validValue) && !this.isNumber(validValue) &&
@@ -375,13 +387,19 @@ export class Utils {
     return false;
   }
 
-  isType(value: any): boolean {
+  isType(value: any): value is Type {
     const validTypes = ['boolean', 'number', 'integer', 'string', 'boolean[]', 'number[]',
       'integer[]', 'string[]', 'object', 'array', 'mongo_id', 'email'];
     return validTypes.includes(value);
   }
 
-  isTypeWithSpecificErrorMessage(value: any): boolean {
+  isPropertyWithSpecificErrorMessage(value: any): value is IPropertyWithSpecificErrorMessage {
+    return this.isTypeWithSpecificErrorMessage(value) || this.isRegExpWithSpecificErrorMessage(value) ||
+    this.isValidValuesWithSpecificErrorMessage(value) || this.isRequiredWithSpecificErrorMessage(value) ||
+    this.isMinOrMaxWithSpecificErrorMessage(value);
+  }
+
+  isTypeWithSpecificErrorMessage(value: any): value is ITypeValueWithSpecificErrorMessage {
     if (this.isPlainObject(value)) {
       if (this.isString(value.message)) {
         return (this.isType(value.value) && this.isString(value.message));
