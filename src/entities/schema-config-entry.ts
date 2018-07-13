@@ -1,5 +1,5 @@
 import {
-  Type, ITypeValueWithSpecificErrorMessage, IStringValueWithSpecificErrorMessage,
+  Type, ITypeValueWithSpecificErrorMessage,
   IRegExpValueWithSpecificErrorMessage, IArrayValueWithSpecificErrorMessage,
   IBooleanValueWithSpecificErrorMessage, INumberValueWithSpecificErrorMessage,
   IMessageEntry, ISchemaConfig, valid_values, type, reg_exp, required, min, max, RegExpValue, ValidValues, SchemaConfigEntryProperty, message, ILength, IUnresolvedFullPath, IFullPath,

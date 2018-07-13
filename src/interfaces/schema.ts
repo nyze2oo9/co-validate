@@ -13,7 +13,7 @@ export interface ISchemaConfigEntry {
 
 export type type = Type | ITypeValueWithSpecificErrorMessage;
 export type reg_exp = RegExp | IRegExpValueWithSpecificErrorMessage;
-export type valid_values = (boolean | number | string)[] | IArrayValueWithSpecificErrorMessage;
+export type valid_values = ValidValues | IArrayValueWithSpecificErrorMessage;
 export type required = boolean | IBooleanValueWithSpecificErrorMessage;
 export type min = number | INumberValueWithSpecificErrorMessage;
 export type max = number | INumberValueWithSpecificErrorMessage;
@@ -55,6 +55,9 @@ export interface IMessageEntry {
   [key: string]: string;
 }
 
+export type IPropertyWithSpecificErrorMessage = ITypeValueWithSpecificErrorMessage | IRegExpValueWithSpecificErrorMessage |
+IArrayValueWithSpecificErrorMessage | IBooleanValueWithSpecificErrorMessage | INumberValueWithSpecificErrorMessage;
+
 export interface ITypeValueWithSpecificErrorMessage {
   value: Type;
   message: string | IMessageEntry;
@@ -65,13 +68,8 @@ export interface IRegExpValueWithSpecificErrorMessage {
   message: string | IMessageEntry;
 }
 
-export interface IStringValueWithSpecificErrorMessage {
-  value: string;
-  message: string | IMessageEntry;
-}
-
 export interface IArrayValueWithSpecificErrorMessage {
-  value: (boolean | number | string)[];
+  value: ValidValues;
   message: string | IMessageEntry;
 }
 
