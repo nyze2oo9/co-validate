@@ -51,7 +51,9 @@ export class Utils {
 
   cloneSchemaConfigEntryInstance(schemaConfigEntry: SchemaConfigEntry): SchemaConfigEntry {
     const newSchemaConfigEntry = new SchemaConfigEntry(this);
-    newSchemaConfigEntry.fullPath = schemaConfigEntry.fullPath.slice(0);
+    if (!this.isNil(schemaConfigEntry.fullPath)) {
+      newSchemaConfigEntry.fullPath = schemaConfigEntry.fullPath.slice(0);
+    }
     const keys : CloneSchemaConfigEntryKeys[] = ['type', 'regExp', 'validValues', 'required', 'min', 'max'];
     for (const key of keys) {
       this.cloneSchemaConfigEntryProperty({
