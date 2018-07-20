@@ -1281,5 +1281,83 @@ describe('Validation works', () => {
       },
     });
   });
+  it('should set validation error message, because nested array is to long ', () => {
+    const objectDescription: ISchemaConfig =  {
+      test1: {
+        max: {
+          value: 2,
+          message: 'array is to long',
+        },
+        nested: [
+          {
+            test2: {
+              type: 'string',
+            },
+          },
+        ],
+      },
+    };
+    const schema = new Schema(objectDescription);
+    
+    const objectToValidate = {
+      test1: [
+        {
+          test2: 'test',
+        },
+        {
+          test2: 'test',
+        },
+        {
+          test2: 'test',
+        },
+      ],
+    };
+    schema.validate(objectToValidate).parse();
+    expect(schema.validationErrorMessages).to.eql([
+      {
+        fullPath: ['test1'],
+        message: 'array is to long',
+      },
+    ]);
+  });
+  it('should set validation error message, because nested array is to short ', () => {
+    const objectDescription: ISchemaConfig =  {
+      test1: {
+        min: {
+          value: 4,
+          message: 'array is to short',
+        },
+        nested: [
+          {
+            test2: {
+              type: 'string',
+            },
+          },
+        ],
+      },
+    };
+    const schema = new Schema(objectDescription);
+    
+    const objectToValidate = {
+      test1: [
+        {
+          test2: 'test',
+        },
+        {
+          test2: 'test',
+        },
+        {
+          test2: 'test',
+        },
+      ],
+    };
+    schema.validate(objectToValidate).parse();
+    expect(schema.validationErrorMessages).to.eql([
+      {
+        fullPath: ['test1'],
+        message: 'array is to short',
+      },
+    ]);
+  });
 });
 
