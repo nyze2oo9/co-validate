@@ -276,9 +276,9 @@ export class Utils {
   isMinOrMaxWithSpecificErrorMessage(value: any): boolean {
     if (this.isPlainObject(value)) {
       if (this.isString(value.message)) {
-        return (this.isInteger(value.value) && this.isString(value.message));
+        return (this.isNumber(value.value) && this.isString(value.message));
       }
-      return (this.isInteger(value.value) && this.isMessageObject(value.message));
+      return (this.isNumber(value.value) && this.isMessageObject(value.message));
     }
     return false;
   }

@@ -255,8 +255,8 @@ export class SchemaConfigEntry {
        this.utils.areAllValuesSet(value, this.max)) && !this.utils.isArray(value)) {
         throw new Error('nested and length properties can\'t be set both, unless nested is an array');
       }
-      if (!this.utils.isNil(this.min) && !this.utils.isInteger(this.min) || (!this.utils.isNil(this.max) 
-      && !this.utils.isInteger(this.max))) {
+      if (!this.utils.isNil(this.min) && !this.utils.isInteger(this.minValue) || (!this.utils.isNil(this.max) 
+      && !this.utils.isInteger(this.maxValue))) {
         throw new Error('If nested is an array, length properties need to be integers');
       }
       this._nested = value;

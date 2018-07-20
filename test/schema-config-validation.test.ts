@@ -819,11 +819,53 @@ describe('Config validation works', () => {
 
     expect(errorFunction).to.throw(message);
   });
+  it('should throw error, when setting nested array with min which is an float', () => {
+    const message = 'If nested is an array, length properties need to be integers';
+
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.min = {
+      value: 1.5,
+      message: 'validation message',
+    };
+
+    const errorFunction = () => {
+      schemaConfigEntry.nested = [
+        {
+          test: {
+            type: 'string',
+          },
+        },
+      ];
+    };
+
+    expect(errorFunction).to.throw(message);
+  });
   it('should throw error, when setting nested array with max which is an float', () => {
     const message = 'If nested is an array, length properties need to be integers';
 
     const schemaConfigEntry = new SchemaConfigEntry(utils);
     schemaConfigEntry.max = 1.5;
+
+    const errorFunction = () => {
+      schemaConfigEntry.nested = [
+        {
+          test: {
+            type: 'string',
+          },
+        },
+      ];
+    };
+
+    expect(errorFunction).to.throw(message);
+  });
+  it('should throw error, when setting nested array with min which is an float', () => {
+    const message = 'If nested is an array, length properties need to be integers';
+
+    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    schemaConfigEntry.max = {
+      value: 1.5,
+      message: 'validation message',
+    };
 
     const errorFunction = () => {
       schemaConfigEntry.nested = [
