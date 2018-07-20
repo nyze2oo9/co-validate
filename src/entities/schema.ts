@@ -157,7 +157,7 @@ export class Schema {
     }
   }
 
-  fillArrayPaths() : SchemaConfigEntry[] {
+  private fillArrayPaths() : SchemaConfigEntry[] {
     const schemaConfigEntriesWithArrayPath = this.getSchemaConfigEntriesWithArrayPath();
     const newSchemaConfigEntries : SchemaConfigEntry[] = this.getSchemaConfigEntriesWithStringPath();
     while (schemaConfigEntriesWithArrayPath.length) {
@@ -186,7 +186,7 @@ export class Schema {
     return newSchemaConfigEntries;
   }
 
-  getSchemaConfigEntriesWithArrayPath() {
+  private getSchemaConfigEntriesWithArrayPath() {
     const result : SchemaConfigEntry[] = [];
     for (const schemaConfigEntry of this.schemaConfigValidated) {
       for (const pathEntry of schemaConfigEntry.fullPath) {
@@ -199,7 +199,7 @@ export class Schema {
     return result;
   }
 
-  getSchemaConfigEntriesWithStringPath() {
+  private getSchemaConfigEntriesWithStringPath() {
     const result : SchemaConfigEntry[] = [];
     for (const schemaConfigEntry of this.schemaConfigValidated) {
       if (this.utils.isStringArray(schemaConfigEntry.fullPath)) {
