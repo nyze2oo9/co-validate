@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import { Utils } from '../src/entities/utils';
 import { Options } from '../src/entities/options';
 import { SchemaConfigEntry } from '../src/entities/schema-config-entry';
+import { DEFAULT_OPTIONS } from '../src/constants/default';
 
 const expect = chai.expect;
 
@@ -12,49 +13,48 @@ class Test {
   }
 }
 
-const utils = new Utils();
-
 describe('Utils', () => {
   it('should return true if the value is a plain object', () => {
-    const utilsToTest = new Utils(new Options({ allowEmpty: true }));
-    expect(utilsToTest.isPlainObject({})).to.equal(true);
-    expect(utils.isPlainObject({ test: 1 })).to.equal(true);
-    expect(utilsToTest.isPlainObject(Object.create(null))).to.equal(true);
-    expect(utils.isPlainObject(new Test(1))).to.equal(true);
+    expect(Utils.isPlainObject({ test: 1 })).to.equal(true);
+    expect(Utils.isPlainObject(new Test(1))).to.equal(true);
+    Utils.options = new Options({ allowEmpty: true });
+    expect(Utils.isPlainObject({})).to.equal(true);
+    expect(Utils.isPlainObject(Object.create(null))).to.equal(true);
   });
   it('should return false if the value isn‘t a plain object', () => {
-    expect(utils.isPlainObject({})).to.equal(false);
-    expect(utils.isPlainObject(Object.create(null))).to.equal(false);
-    expect(utils.isPlainObject(1)).to.equal(false);
-    expect(utils.isPlainObject(Number(1))).to.equal(false);
-    expect(utils.isPlainObject(true)).to.equal(false);
-    expect(utils.isPlainObject('test')).to.equal(false);
-    expect(utils.isPlainObject([1, 2])).to.equal(false);
-    expect(utils.isPlainObject(null)).to.equal(false);
-    expect(utils.isPlainObject(undefined)).to.equal(false);
+    Utils.options = new Options(DEFAULT_OPTIONS);
+    expect(Utils.isPlainObject({})).to.equal(false);
+    expect(Utils.isPlainObject(Object.create(null))).to.equal(false);
+    expect(Utils.isPlainObject(1)).to.equal(false);
+    expect(Utils.isPlainObject(Number(1))).to.equal(false);
+    expect(Utils.isPlainObject(true)).to.equal(false);
+    expect(Utils.isPlainObject('test')).to.equal(false);
+    expect(Utils.isPlainObject([1, 2])).to.equal(false);
+    expect(Utils.isPlainObject(null)).to.equal(false);
+    expect(Utils.isPlainObject(undefined)).to.equal(false);
     const func = () => { console.log('test'); };
-    expect(utils.isPlainObject(func)).to.equal(false);
-    expect(utils.isPlainObject(Function)).to.equal(false);
+    expect(Utils.isPlainObject(func)).to.equal(false);
+    expect(Utils.isPlainObject(Function)).to.equal(false);
   });
   it('should return true if the value is a string', () => {
-    expect(utils.isString('test')).to.equal(true);
+    expect(Utils.isString('test')).to.equal(true);
   });
   it('should return false if the value isn‘t a string', () => {
-    expect(utils.isString(1)).to.equal(false);
-    expect(utils.isString(undefined)).to.equal(false);
+    expect(Utils.isString(1)).to.equal(false);
+    expect(Utils.isString(undefined)).to.equal(false);
   });
   it('should return true if the value is a valid type string', () => {
-    expect(utils.isType('number')).to.equal(true);
+    expect(Utils.isType('number')).to.equal(true);
   });
   it('should return false if the value isn‘t a valid type string', () => {
-    expect(utils.isType('numbre')).to.equal(false);
+    expect(Utils.isType('numbre')).to.equal(false);
   });
   it('should return true if the value is a valid type with message object', () => {
-    expect(utils.isTypeWithSpecificErrorMessage({
+    expect(Utils.isTypeWithSpecificErrorMessage({
       value: 'number',
       message: 'test',
     })).to.equal(true);
-    expect(utils.isTypeWithSpecificErrorMessage({
+    expect(Utils.isTypeWithSpecificErrorMessage({
       value: 'number',
       message: {
         de: 'test',
@@ -63,60 +63,60 @@ describe('Utils', () => {
     })).to.equal(true);
   });
   it('should return false if the value isn‘t a valid type with message object', () => {
-    expect(utils.isTypeWithSpecificErrorMessage({
+    expect(Utils.isTypeWithSpecificErrorMessage({
       value: 'number1',
       message: 'test',
     })).to.equal(false);
-    expect(utils.isTypeWithSpecificErrorMessage({
+    expect(Utils.isTypeWithSpecificErrorMessage({
       value: 'stirng',
       message: {
         de: 'test',
         en: 'test',
       },
     })).to.equal(false);
-    expect(utils.isTypeWithSpecificErrorMessage({})).to.equal(false);
+    expect(Utils.isTypeWithSpecificErrorMessage({})).to.equal(false);
   });
   it('should return true if the value is a valid message object', () => {
-    expect(utils.isMessageObject({
+    expect(Utils.isMessageObject({
       de: 'hallo',
       en: 'hello',
     })).to.equal(true);
   });
   it('should return false if the value isn‘t a valid message object', () => {
-    expect(utils.isMessageObject({
+    expect(Utils.isMessageObject({
       de: 'hallo',
       en: 1,
     })).to.equal(false);
-    expect(utils.isMessageObject({})).to.equal(false);
-    expect(utils.isMessageObject(true)).to.equal(false);
+    expect(Utils.isMessageObject({})).to.equal(false);
+    expect(Utils.isMessageObject(true)).to.equal(false);
   });
   it('should return the base tag [object Object] if the value is an object', () => {
-    expect((<any>utils).getBaseTag({
+    expect((<any>Utils).getBaseTag({
       de: 'hallo',
       en: 'hello',
     })).to.equal('[object Object]');
   });
   it('should return true if all values are set', () => {
-    expect(utils.areAllValuesSet(true, 'test')).to.equal(true);
-    expect(utils.areAllValuesSet({}, 'test', 1)).to.equal(true);
+    expect(Utils.areAllValuesSet(true, 'test')).to.equal(true);
+    expect(Utils.areAllValuesSet({}, 'test', 1)).to.equal(true);
   });
   it('should return false if not all values are set', () => {
-    expect(utils.areAllValuesSet(undefined, 'test')).to.equal(false);
-    expect(utils.areAllValuesSet({}, undefined, 1)).to.equal(false);
+    expect(Utils.areAllValuesSet(undefined, 'test')).to.equal(false);
+    expect(Utils.areAllValuesSet({}, undefined, 1)).to.equal(false);
   });
   it('should return true if value is a message', () => {
-    expect(utils.isMessage('message')).to.equal(true);
-    expect(utils.isMessage({
+    expect(Utils.isMessage('message')).to.equal(true);
+    expect(Utils.isMessage({
       de: 'german message',
       en: 'english message',
     })).to.equal(true);
   });
   it('should return true if value is a min/max value with error message', () => {
-    expect(utils.isMinOrMaxWithSpecificErrorMessage({
+    expect(Utils.isMinOrMaxWithSpecificErrorMessage({
       value: 1,
       message: 'message',
     })).to.equal(true);
-    expect(utils.isMinOrMaxWithSpecificErrorMessage({
+    expect(Utils.isMinOrMaxWithSpecificErrorMessage({
       value: 1,
       message: {
         de: 'german message',
@@ -125,32 +125,32 @@ describe('Utils', () => {
     })).to.equal(true);
   });
   it('should return false if value is not a min/max value with error message', () => {
-    expect(utils.isMinOrMaxWithSpecificErrorMessage({
+    expect(Utils.isMinOrMaxWithSpecificErrorMessage({
       value: true,
       message: 'message',
     })).to.equal(false);
-    expect(utils.isMinOrMaxWithSpecificErrorMessage({
+    expect(Utils.isMinOrMaxWithSpecificErrorMessage({
       value: 'test',
       message: {
         de: 'german message',
         en: 'english message',
       },
     })).to.equal(false);
-    expect(utils.isMinOrMaxWithSpecificErrorMessage({})).to.equal(false);
+    expect(Utils.isMinOrMaxWithSpecificErrorMessage({})).to.equal(false);
   });
   it('should return true if value is a valid type when length properties are set', () => {
-    expect(utils.isValidTypeWithLengthProperties('number')).to.equal(true);
-    expect(utils.isValidTypeWithLengthProperties('string')).to.equal(true);
+    expect(Utils.isValidTypeWithLengthProperties('number')).to.equal(true);
+    expect(Utils.isValidTypeWithLengthProperties('string')).to.equal(true);
   });
   it('should return true if value is a valid type when length properties are set', () => {
-    expect(utils.isValidTypeWithLengthProperties('boolean')).to.equal(false);
+    expect(Utils.isValidTypeWithLengthProperties('boolean')).to.equal(false);
   });
   it('should return true if value is a required value with error message', () => {
-    expect(utils.isRequiredWithSpecificErrorMessage({
+    expect(Utils.isRequiredWithSpecificErrorMessage({
       value: true,
       message: 'message',
     })).to.equal(true);
-    expect(utils.isRequiredWithSpecificErrorMessage({
+    expect(Utils.isRequiredWithSpecificErrorMessage({
       value: false,
       message: {
         de: 'german message',
@@ -159,37 +159,37 @@ describe('Utils', () => {
     })).to.equal(true);
   });
   it('should return false if value is not a required value with error message', () => {
-    expect(utils.isRequiredWithSpecificErrorMessage({
+    expect(Utils.isRequiredWithSpecificErrorMessage({
       value: 1,
       message: 'message',
     })).to.equal(false);
-    expect(utils.isRequiredWithSpecificErrorMessage({
+    expect(Utils.isRequiredWithSpecificErrorMessage({
       value: 'test',
       message: {
         de: 'german message',
         en: 'english message',
       },
     })).to.equal(false);
-    expect(utils.isRequiredWithSpecificErrorMessage({})).to.equal(false);
+    expect(Utils.isRequiredWithSpecificErrorMessage({})).to.equal(false);
   });
   it('should return true if value is a valid valid_values array', () => {
-    expect(utils.isValidValuesArray([1, 2, 3])).to.equal(true);
-    expect(utils.isValidValuesArray(['test', 'test2', 'test3'])).to.equal(true);
-    expect(utils.isValidValuesArray([true])).to.equal(true);
-    expect(utils.isValidValuesArray([true, 1, 'test'])).to.equal(true);
+    expect(Utils.isValidValuesArray([1, 2, 3])).to.equal(true);
+    expect(Utils.isValidValuesArray(['test', 'test2', 'test3'])).to.equal(true);
+    expect(Utils.isValidValuesArray([true])).to.equal(true);
+    expect(Utils.isValidValuesArray([true, 1, 'test'])).to.equal(true);
   });
   it('should return false if value isn\'t a valid valid_values array', () => {
-    expect(utils.isValidValuesArray(true)).to.equal(false);
-    // expect(utils.isValidValuesArray(undefined)).to.equal(false);
-    expect(utils.isValidValuesArray({})).to.equal(false);
-    expect(utils.isValidValuesArray([true, 1, 'test', {}])).to.equal(false);
+    expect(Utils.isValidValuesArray(true)).to.equal(false);
+    expect(Utils.isValidValuesArray(undefined)).to.equal(false);
+    expect(Utils.isValidValuesArray({})).to.equal(false);
+    expect(Utils.isValidValuesArray([true, 1, 'test', {}])).to.equal(false);
   });
   it('should return true if value is a valid_value value with error message', () => {
-    expect(utils.isValidValuesWithSpecificErrorMessage({
+    expect(Utils.isValidValuesWithSpecificErrorMessage({
       value: [true, 1, 'a'],
       message: 'message',
     })).to.equal(true);
-    expect(utils.isValidValuesWithSpecificErrorMessage({
+    expect(Utils.isValidValuesWithSpecificErrorMessage({
       value: [true, 1, 'a'],
       message: {
         de: 'german message',
@@ -198,69 +198,70 @@ describe('Utils', () => {
     })).to.equal(true);
   });
   it('should return false if value is not a valid_value value with error message', () => {
-    expect(utils.isValidValuesWithSpecificErrorMessage({
+    expect(Utils.isValidValuesWithSpecificErrorMessage({
       value: [true, 1, 'test', {}],
       message: 'message',
     })).to.equal(false);
-    expect(utils.isValidValuesWithSpecificErrorMessage({
+    expect(Utils.isValidValuesWithSpecificErrorMessage({
       value: 'test',
       message: {
         de: 'german message',
         en: 'english message',
       },
     })).to.equal(false);
-    // expect(utils.isValidValuesWithSpecificErrorMessage({})).to.equal(false);
+    // expect(Utils.isValidValuesWithSpecificErrorMessage({})).to.equal(false);
   });
   it('should return true if value is an array', () => {
-    const utilsToTest = new Utils(new Options({ allowEmpty: true }));
-    expect(utilsToTest.isArray([])).to.equal(true);
-    expect(utils.isArray([1, 'test'])).to.equal(true);
+    Utils.options = new Options({ allowEmpty: true });
+    expect(Utils.isArray([])).to.equal(true);
+    Utils.options = new Options(DEFAULT_OPTIONS);
+    expect(Utils.isArray([1, 'test'])).to.equal(true);
   });
   it('should return false if value is an empty array', () => {
-    expect(utils.isArray([])).to.equal(false);
-    expect(utils.isArray([])).to.equal(false);
+    expect(Utils.isArray([])).to.equal(false);
+    expect(Utils.isArray([])).to.equal(false);
   });
   it('should return false if value isn\'t an array', () => {
-    expect(utils.isArray({})).to.equal(false);
-    expect(utils.isArray(true)).to.equal(false);
-    expect(utils.isArray('test')).to.equal(false);
+    expect(Utils.isArray({})).to.equal(false);
+    expect(Utils.isArray(true)).to.equal(false);
+    expect(Utils.isArray('test')).to.equal(false);
   });
   it('should return true if value is a boolean', () => {
-    expect(utils.isBoolean(true)).to.equal(true);
-    expect(utils.isBoolean(false)).to.equal(true);
+    expect(Utils.isBoolean(true)).to.equal(true);
+    expect(Utils.isBoolean(false)).to.equal(true);
   });
   it('should return false if value isn\'t a boolean', () => {
-    expect(utils.isBoolean({})).to.equal(false);
-    expect(utils.isBoolean(1)).to.equal(false);
-    expect(utils.isBoolean('test')).to.equal(false);
+    expect(Utils.isBoolean({})).to.equal(false);
+    expect(Utils.isBoolean(1)).to.equal(false);
+    expect(Utils.isBoolean('test')).to.equal(false);
   });
   it('should return true if value is a number', () => {
-    expect(utils.isNumber(1)).to.equal(true);
-    expect(utils.isNumber(1.3)).to.equal(true);
+    expect(Utils.isNumber(1)).to.equal(true);
+    expect(Utils.isNumber(1.3)).to.equal(true);
   });
   it('should return false if value isn\'t a number', () => {
-    expect(utils.isNumber({})).to.equal(false);
-    expect(utils.isNumber(true)).to.equal(false);
-    expect(utils.isNumber('test')).to.equal(false);
+    expect(Utils.isNumber({})).to.equal(false);
+    expect(Utils.isNumber(true)).to.equal(false);
+    expect(Utils.isNumber('test')).to.equal(false);
   });
   it('should return true if value is a integer', () => {
-    expect(utils.isInteger(1)).to.equal(true);
+    expect(Utils.isInteger(1)).to.equal(true);
   });
   it('should return false if value isn\'t a integer', () => {
-    expect(utils.isInteger(1.3)).to.equal(false);
+    expect(Utils.isInteger(1.3)).to.equal(false);
   });
   it('should return true if value is a regexp', () => {
-    expect(utils.isRegExp(/ab+c/i)).to.equal(true);
+    expect(Utils.isRegExp(/ab+c/i)).to.equal(true);
   });
   it('should return false if value isn\'t a regexp', () => {
-    expect(utils.isRegExp('/ab+c/i')).to.equal(false);
+    expect(Utils.isRegExp('/ab+c/i')).to.equal(false);
   });
   it('should return true if value is a regexp value with error message', () => {
-    expect(utils.isRegExpWithSpecificErrorMessage({
+    expect(Utils.isRegExpWithSpecificErrorMessage({
       value: /ab+c/i,
       message: 'message',
     })).to.equal(true);
-    expect(utils.isRegExpWithSpecificErrorMessage({
+    expect(Utils.isRegExpWithSpecificErrorMessage({
       value: /ab+c/i,
       message: {
         de: 'german message',
@@ -269,190 +270,198 @@ describe('Utils', () => {
     })).to.equal(true);
   });
   it('should return false if value is not a regexp value with error message', () => {
-    expect(utils.isRegExpWithSpecificErrorMessage({
+    expect(Utils.isRegExpWithSpecificErrorMessage({
       value: '/ab+c/i',
       message: 'message',
     })).to.equal(false);
-    expect(utils.isRegExpWithSpecificErrorMessage({
+    expect(Utils.isRegExpWithSpecificErrorMessage({
       value: '/ab+c/i',
       message: {
         de: 'german message',
         en: 'english message',
       },
     })).to.equal(false);
-    // expect(utils.isValidValuesWithSpecificErrorMessage({})).to.equal(false);
+    // expect(Utils.isValidValuesWithSpecificErrorMessage({})).to.equal(false);
   });
   it('should return false if value is set', () => {
-    expect(utils.isNil(false)).to.equal(false);
+    expect(Utils.isNil(false)).to.equal(false);
   });
   it('should return true if value isn\'t set', () => {
-    expect(utils.isNil(undefined)).to.equal(true);
+    expect(Utils.isNil(undefined)).to.equal(true);
   });
   it('should return true if it\'s not NaN and allowNaN is false', () => {
-    expect(utils.checkNaNBasedOnOptions(1)).to.equal(true);
+    expect(Utils.checkNaNBasedOnOptions(1)).to.equal(true);
   });
   it('should return true if it\'s not NaN and allowNaN is true', () => {
-    const utilsToTest = new Utils(new Options({ allowNaN: true }));
-    expect(utilsToTest.checkNaNBasedOnOptions(1)).to.equal(true);
+    Utils.options = new Options({ allowNaN: true });
+    expect(Utils.checkNaNBasedOnOptions(1)).to.equal(true);
   });
   it('should return false if NaN is set and allowNaN is false', () => {
-    expect(utils.checkNaNBasedOnOptions(NaN)).to.equal(false);
+    Utils.options = new Options(DEFAULT_OPTIONS);
+    expect(Utils.checkNaNBasedOnOptions(NaN)).to.equal(false);
   });
   it('should return true if NaN is set and allowNaN is true', () => {
-    const utilsToTest = new Utils(new Options({ allowNaN: true }));
-    expect(utilsToTest.checkNaNBasedOnOptions(NaN)).to.equal(true);
+    Utils.options = new Options({ allowNaN: true });
+    expect(Utils.checkNaNBasedOnOptions(NaN)).to.equal(true);
   });
   it('should return true if it\'s not Infinite and allowInfinite is false', () => {
-    expect(utils.checkInfiteBasedOnOptions(1)).to.equal(true);
+    Utils.options = new Options(DEFAULT_OPTIONS);
+    expect(Utils.checkInfiteBasedOnOptions(1)).to.equal(true);
   });
   it('should return true if it\'s not Infinite and allowInfinite is true', () => {
-    const utilsToTest = new Utils(new Options({ allowInfinite: true }));
-    expect(utilsToTest.checkInfiteBasedOnOptions(1)).to.equal(true);
+    Utils.options = new Options({ allowInfinite: true });
+    expect(Utils.checkInfiteBasedOnOptions(1)).to.equal(true);
   });
   it('should return false if Infinite is set and allowInfinite is false', () => {
-    expect(utils.checkInfiteBasedOnOptions(Number.POSITIVE_INFINITY)).to.equal(false);
-    expect(utils.checkInfiteBasedOnOptions(Number.NEGATIVE_INFINITY)).to.equal(false);
+    Utils.options = new Options(DEFAULT_OPTIONS);
+    expect(Utils.checkInfiteBasedOnOptions(Number.POSITIVE_INFINITY)).to.equal(false);
+    expect(Utils.checkInfiteBasedOnOptions(Number.NEGATIVE_INFINITY)).to.equal(false);
   });
   it('should return true if Infinite is set and allowInfinite is true', () => {
-    const utilsToTest = new Utils(new Options({ allowInfinite: true }));
-    expect(utilsToTest.checkInfiteBasedOnOptions(Number.POSITIVE_INFINITY)).to.equal(true);
-    expect(utilsToTest.checkInfiteBasedOnOptions(Number.NEGATIVE_INFINITY)).to.equal(true);
+    Utils.options = new Options({ allowInfinite: true });
+    expect(Utils.checkInfiteBasedOnOptions(Number.POSITIVE_INFINITY)).to.equal(true);
+    expect(Utils.checkInfiteBasedOnOptions(Number.NEGATIVE_INFINITY)).to.equal(true);
   });
   it('should return false if value is NaN and AllowNaN is false', () => {
-    expect(utils.isNumber(NaN)).to.equal(false);
+    Utils.options = new Options(DEFAULT_OPTIONS);
+    expect(Utils.isNumber(NaN)).to.equal(false);
   });
   it('should return true if value is NaN and AllowNaN is true', () => {
-    const utilsToTest = new Utils(new Options({ allowNaN: true }));
-    expect(utilsToTest.isNumber(NaN)).to.equal(true);
+    Utils.options = new Options({ allowNaN: true });
+    expect(Utils.isNumber(NaN)).to.equal(true);
   });
   it('should return false if value is Infinite and allowInfinite is false', () => {
-    expect(utils.isNumber(Number.POSITIVE_INFINITY)).to.equal(false);
-    expect(utils.isNumber(Number.NEGATIVE_INFINITY)).to.equal(false);
+    Utils.options = new Options(DEFAULT_OPTIONS);
+    expect(Utils.isNumber(Number.POSITIVE_INFINITY)).to.equal(false);
+    expect(Utils.isNumber(Number.NEGATIVE_INFINITY)).to.equal(false);
   });
   it('should return false if value is Infinite and allowInfinite is false', () => {
-    const utilsToTest = new Utils(new Options({ allowInfinite: true }));
-    expect(utilsToTest.isNumber(Number.POSITIVE_INFINITY)).to.equal(true);
-    expect(utilsToTest.isNumber(Number.NEGATIVE_INFINITY)).to.equal(true);
+    Utils.options = new Options({ allowInfinite: true });
+    expect(Utils.isNumber(Number.POSITIVE_INFINITY)).to.equal(true);
+    expect(Utils.isNumber(Number.NEGATIVE_INFINITY)).to.equal(true);
   });
   it('should return false if value is NaN and AllowNaN is false', () => {
-    expect(utils.isInteger(NaN)).to.equal(false);
+    Utils.options = new Options(DEFAULT_OPTIONS);
+    expect(Utils.isInteger(NaN)).to.equal(false);
   });
   it('should return false if value is Infinite and allowInfinite is false', () => {
-    expect(utils.isInteger(Number.POSITIVE_INFINITY)).to.equal(false);
-    expect(utils.isInteger(Number.POSITIVE_INFINITY)).to.equal(false);
+    expect(Utils.isInteger(Number.POSITIVE_INFINITY)).to.equal(false);
+    expect(Utils.isInteger(Number.POSITIVE_INFINITY)).to.equal(false);
   });
   it('should return false if value is an empty string and allowEmpty is false', () => {
-    expect(utils.checkEmptyStringBasedOnOptions('')).to.equal(false);
+    expect(Utils.checkEmptyStringBasedOnOptions('')).to.equal(false);
   });
   it('should return true if value is an empty string and allowEmpty is true', () => {
-    const utilsToTest = new Utils(new Options({ allowEmpty: true }));
-    expect(utilsToTest.checkEmptyStringBasedOnOptions('')).to.equal(true);
+    Utils.options = new Options({ allowEmpty: true });
+    expect(Utils.checkEmptyStringBasedOnOptions('')).to.equal(true);
   });
   it('should return false if value is an empty string and allowEmpty is false', () => {
-    expect(utils.isString('')).to.equal(false);
+    Utils.options = new Options(DEFAULT_OPTIONS);
+    expect(Utils.isString('')).to.equal(false);
   });
   it('should return true if value is an empty string and allowEmpty is true', () => {
-    const utilsToTest = new Utils(new Options({ allowEmpty: true }));
-    expect(utilsToTest.isString('')).to.equal(true);
+    Utils.options = new Options({ allowEmpty: true });
+    expect(Utils.isString('')).to.equal(true);
   });
   it('should return true if value matches a specific regExp', () => {
-    expect(utils.checkRegExp(/Hello/g, 'Hello World')).to.equal(true);
+    Utils.options = new Options(DEFAULT_OPTIONS);
+    expect(Utils.checkRegExp(/Hello/g, 'Hello World')).to.equal(true);
   });
   it('should return false if value isn\'t matching a specific regExp', () => {
-    expect(utils.checkRegExp(/Hello/g, 'Hell World')).to.equal(false);
+    expect(Utils.checkRegExp(/Hello/g, 'Hell World')).to.equal(false);
   });
   it('should return true if value is included in a validValues Array', () => {
-    expect(utils.checkValidValue([1, 2], 1)).to.equal(true);
+    expect(Utils.checkValidValue([1, 2], 1)).to.equal(true);
   });
   it('should return false if value isn\'t included in a validValues Array', () => {
-    expect(utils.checkValidValue([1, 2], 3)).to.equal(false);
+    expect(Utils.checkValidValue([1, 2], 3)).to.equal(false);
   });
   it('should return true if value is required and set', () => {
-    expect(utils.checkRequired(true, 1)).to.equal(true);
-    expect(utils.checkRequired(false, undefined)).to.equal(true);
+    expect(Utils.checkRequired(true, 1)).to.equal(true);
+    expect(Utils.checkRequired(false, undefined)).to.equal(true);
   });
   it('should return false if value is required but not set', () => {
-    expect(utils.checkRequired(true, undefined)).to.equal(false);
+    expect(Utils.checkRequired(true, undefined)).to.equal(false);
   });
   it('should return true if value is higher or equal then min', () => {
-    expect(utils.checkNumberLength({ min: 1 }, 1)).to.equal(true);
-    expect(utils.checkNumberLength({ min: 1 }, 2)).to.equal(true);
+    expect(Utils.checkNumberLength({ min: 1 }, 1)).to.equal(true);
+    expect(Utils.checkNumberLength({ min: 1 }, 2)).to.equal(true);
   });
   it('should return false if value is less then min', () => {
-    expect(utils.checkNumberLength({ min: 1 }, 0)).to.equal(false);
+    expect(Utils.checkNumberLength({ min: 1 }, 0)).to.equal(false);
   });
   it('should return true if value is less or equal then max', () => {
-    expect(utils.checkNumberLength({ max: 2 }, 1)).to.equal(true);
-    expect(utils.checkNumberLength({ max: 2 }, 2)).to.equal(true);
+    expect(Utils.checkNumberLength({ max: 2 }, 1)).to.equal(true);
+    expect(Utils.checkNumberLength({ max: 2 }, 2)).to.equal(true);
   });
   it('should return false if value is higher then max', () => {
-    expect(utils.checkNumberLength({ max: 2 }, 3)).to.equal(false);
+    expect(Utils.checkNumberLength({ max: 2 }, 3)).to.equal(false);
   });
   it('should return true if the length of the supplied string is longer or equal min', () => {
-    expect(utils.checkStringLength({ min: 1 }, 't')).to.equal(true);
-    expect(utils.checkStringLength({ min: 1 }, 'test')).to.equal(true);
+    expect(Utils.checkStringLength({ min: 1 }, 't')).to.equal(true);
+    expect(Utils.checkStringLength({ min: 1 }, 'test')).to.equal(true);
   });
   it('should return false if the length of the supplied string isn\' longer or equal min', () => {
-    expect(utils.checkStringLength({ min: 5 }, 'test')).to.equal(false);
+    expect(Utils.checkStringLength({ min: 5 }, 'test')).to.equal(false);
   });
   it('should return true if the length of the supplied string is less or equal max', () => {
-    expect(utils.checkStringLength({ max: 4 }, 'tes')).to.equal(true);
-    expect(utils.checkStringLength({ max: 4 }, 'test')).to.equal(true);
+    expect(Utils.checkStringLength({ max: 4 }, 'tes')).to.equal(true);
+    expect(Utils.checkStringLength({ max: 4 }, 'test')).to.equal(true);
   });
   it('should return false if the length of the supplied string isn\'t less or equal max', () => {
-    expect(utils.checkStringLength({ max: 2 }, 'test')).to.equal(false);
+    expect(Utils.checkStringLength({ max: 2 }, 'test')).to.equal(false);
   });
   it('should return true if the length of the supplied array is longer or equal min', () => {
-    expect(utils.checkArrayLength({ min: 1 }, [1])).to.equal(true);
-    expect(utils.checkArrayLength({ min: 1 }, [1, 2])).to.equal(true);
+    expect(Utils.checkArrayLength({ min: 1 }, [1])).to.equal(true);
+    expect(Utils.checkArrayLength({ min: 1 }, [1, 2])).to.equal(true);
   });
   it('should return false if the length of the supplied array isn\' longer or equal min', () => {
-    expect(utils.checkArrayLength({ min: 5 }, [1, 2, 3, 4])).to.equal(false);
+    expect(Utils.checkArrayLength({ min: 5 }, [1, 2, 3, 4])).to.equal(false);
   });
   it('should return true if the length of the supplied array is less or equal max', () => {
-    expect(utils.checkArrayLength({ max: 4 }, [1, 2, 3])).to.equal(true);
-    expect(utils.checkArrayLength({ max: 4 }, [1, 2, 3, 4])).to.equal(true);
+    expect(Utils.checkArrayLength({ max: 4 }, [1, 2, 3])).to.equal(true);
+    expect(Utils.checkArrayLength({ max: 4 }, [1, 2, 3, 4])).to.equal(true);
   });
   it('should return false if the length of the supplied array isn\'t less or equal max', () => {
-    expect(utils.checkArrayLength({ max: 2 }, [1, 2, 3, 4])).to.equal(false);
+    expect(Utils.checkArrayLength({ max: 2 }, [1, 2, 3, 4])).to.equal(false);
   });
   it('should return true if supplied parameter matched the interface IMaxObject', () => {
-    expect((<any>utils).instanceOfMaxObject({ max: 2 })).to.equal(true);
+    expect((<any>Utils).instanceOfMaxObject({ max: 2 })).to.equal(true);
   });
   it('should return false if supplied parameter isn\'t matching the interface IMaxObject', () => {
-    expect((<any>utils).instanceOfMaxObject({ min: 2 })).to.equal(false);
+    expect((<any>Utils).instanceOfMaxObject({ min: 2 })).to.equal(false);
   });
   it('should return true if supplied parameter matched the interface IMinObject', () => {
-    expect((<any>utils).instanceOfMinObject({ min: 2 })).to.equal(true);
+    expect((<any>Utils).instanceOfMinObject({ min: 2 })).to.equal(true);
   });
   it('should return false if supplied parameter isn\'t matching the interface IMinObject', () => {
-    expect((<any>utils).instanceOfMinObject({ max: 2 })).to.equal(false);
+    expect((<any>Utils).instanceOfMinObject({ max: 2 })).to.equal(false);
   });
   it('testing checkLengthProperty', () => {
-    expect((utils).checkLengthProperty({ min: 2 }, 2)).to.equal(true);
-    expect((utils).checkLengthProperty({ max: 2 }, 2)).to.equal(true);
-    expect((utils).checkLengthProperty({ min: 2 }, 1)).to.equal(false);
-    expect((utils).checkLengthProperty({ max: 2 }, 3)).to.equal(false);
-    expect((utils).checkLengthProperty({ min: 2 }, 'te')).to.equal(true);
-    expect((utils).checkLengthProperty({ max: 2 }, 'te')).to.equal(true);
-    expect((utils).checkLengthProperty({ min: 2 }, 't')).to.equal(false);
-    expect((utils).checkLengthProperty({ max: 2 }, 'tes')).to.equal(false);
-    expect((utils).checkLengthProperty({ min: 2 }, [1, 2])).to.equal(true);
-    expect((utils).checkLengthProperty({ max: 2 }, [1, 2])).to.equal(true);
-    expect((utils).checkLengthProperty({ min: 2 }, [1])).to.equal(false);
-    expect((utils).checkLengthProperty({ max: 2 }, [1, 2, 3])).to.equal(false);
-    expect((utils).checkLengthProperty({ min: 2 }, true)).to.equal(false);
-    expect((utils).checkLengthProperty({ max: 2 }, true)).to.equal(false);
+    expect(Utils.checkLengthProperty({ min: 2 }, 2)).to.equal(true);
+    expect(Utils.checkLengthProperty({ max: 2 }, 2)).to.equal(true);
+    expect(Utils.checkLengthProperty({ min: 2 }, 1)).to.equal(false);
+    expect(Utils.checkLengthProperty({ max: 2 }, 3)).to.equal(false);
+    expect(Utils.checkLengthProperty({ min: 2 }, 'te')).to.equal(true);
+    expect(Utils.checkLengthProperty({ max: 2 }, 'te')).to.equal(true);
+    expect(Utils.checkLengthProperty({ min: 2 }, 't')).to.equal(false);
+    expect(Utils.checkLengthProperty({ max: 2 }, 'tes')).to.equal(false);
+    expect(Utils.checkLengthProperty({ min: 2 }, [1, 2])).to.equal(true);
+    expect(Utils.checkLengthProperty({ max: 2 }, [1, 2])).to.equal(true);
+    expect(Utils.checkLengthProperty({ min: 2 }, [1])).to.equal(false);
+    expect(Utils.checkLengthProperty({ max: 2 }, [1, 2, 3])).to.equal(false);
+    expect(Utils.checkLengthProperty({ min: 2 }, true)).to.equal(false);
+    expect(Utils.checkLengthProperty({ max: 2 }, true)).to.equal(false);
   });
   it('should return first index of array true', () => {
     const fullPath = ['test1', { array: true }];
     const entry = '0';
-    expect(utils.getFirstIndex(fullPath, entry)).to.eql(1);
+    expect(Utils.getFirstIndex(fullPath, entry)).to.eql(1);
   });
   it('should return -1, because there is no occurence of array true', () => {
     const fullPath = ['test1', '0'];
     const entry = '0';
-    expect(utils.getFirstIndex(fullPath, entry)).to.eql(-1);
+    expect(Utils.getFirstIndex(fullPath, entry)).to.eql(-1);
   });
   it('should return first array lengths', () => {
     const unresolvedfullPath = ['test1', { array: true }, 'test2', { array: true }];
@@ -492,7 +501,7 @@ describe('Utils', () => {
       ], 
     };
 
-    expect(utils.getLength({
+    expect(Utils.getLength({
       unresolvedfullPath,
       index,
       variableToValidate: toTest,
@@ -539,7 +548,7 @@ describe('Utils', () => {
       ], 
     };
 
-    expect(utils.getLength({
+    expect(Utils.getLength({
       unresolvedfullPath,
       index,
       variableToValidate: toTest,
@@ -562,7 +571,7 @@ describe('Utils', () => {
       ], 
     };
 
-    expect(utils.getLength({
+    expect(Utils.getLength({
       unresolvedfullPath,
       index,
       variableToValidate: toTest,
@@ -570,18 +579,20 @@ describe('Utils', () => {
   });
   it('should return true, because array is a valid (string|number)[]', () => {
     const array1 = ['test1', 1, 'test2', 2];
-    expect(utils.isStringOrNumberArray(array1)).to.equal(true);
+    expect(Utils.isStringOrNumberArray(array1)).to.equal(true);
     const array2 = [0, 1, 3, 2];
-    expect(utils.isStringOrNumberArray(array2)).to.equal(true);
+    expect(Utils.isStringOrNumberArray(array2)).to.equal(true);
     const array3 = ['test1', 'test2'];
-    expect(utils.isStringOrNumberArray(array3)).to.equal(true);
+    expect(Utils.isStringOrNumberArray(array3)).to.equal(true);
   });
   it('should return false, because array isn\'t a valid (string|number)[]', () => {
-    const array = ['test1', { array : true }, 'test2', 2];
-    expect(utils.isStringOrNumberArray(array)).to.equal(false);
+    const array1 = ['test1', { array : true }, 'test2', 2];
+    expect(Utils.isStringOrNumberArray(array1)).to.equal(false);
+    const array2 = 1;
+    expect(Utils.isStringOrNumberArray(array2)).to.equal(false);
   });
   it('should only copy the reference of the object and both object should contain the same type value', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.type = 'string';
     const newSchemaConfigEntry = schemaConfigEntry;
     newSchemaConfigEntry.type = 'number';
@@ -589,7 +600,7 @@ describe('Utils', () => {
     expect(newSchemaConfigEntry.type).to.eql('number');
   });
   it('should return complete cloned schema config entry class with values only (type)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.unresolvedfullPath = ['test1', 'test2', 0];
     schemaConfigEntry.type = 'string';
     schemaConfigEntry.required = true;
@@ -597,7 +608,7 @@ describe('Utils', () => {
     schemaConfigEntry.max = 64;
     schemaConfigEntry.message = 'test message';
 
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     expect(newSchemaConfigEntry.unresolvedfullPath).to.eql(['test1', 'test2', 0]);
     expect(newSchemaConfigEntry.type).to.eql('string');
     expect(newSchemaConfigEntry.required).to.eql(true);
@@ -606,25 +617,25 @@ describe('Utils', () => {
     expect(newSchemaConfigEntry.message).to.eql('test message');
   });
   it('should return complete cloned schema config entry class with values only (regExp)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.unresolvedfullPath = ['test1', 'test2', 0];
     schemaConfigEntry.regExp = /ab/i;
 
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     expect(newSchemaConfigEntry.unresolvedfullPath).to.eql(['test1', 'test2', 0]);
     expect(newSchemaConfigEntry.regExp).to.eql(/ab/i);
   });
   it('should return complete cloned schema config entry class with values only (validValues)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.unresolvedfullPath = ['test1', 'test2', 0];
     schemaConfigEntry.validValues = [1,2,3];
 
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     expect(newSchemaConfigEntry.unresolvedfullPath).to.eql(['test1', 'test2', 0]);
     expect(newSchemaConfigEntry.validValues).to.eql([1,2,3]);
   });
   it('should return complete cloned schema config entry class with values only (nested)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.unresolvedfullPath = ['test1', 'test2', 0];
     schemaConfigEntry.nested = [
       {
@@ -634,7 +645,7 @@ describe('Utils', () => {
       },
     ];
 
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     expect(newSchemaConfigEntry.unresolvedfullPath).to.eql(['test1', 'test2', 0]);
     expect(newSchemaConfigEntry.nested).to.eql([
       {
@@ -645,7 +656,7 @@ describe('Utils', () => {
     ]);
   });
   it('should return complete cloned schema config entry class with simple value and mesages', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.unresolvedfullPath = ['test1', 'test2', 0];
     schemaConfigEntry.type = {
       value: 'string',
@@ -664,7 +675,7 @@ describe('Utils', () => {
       message: 'test message',
     };
     
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     expect(newSchemaConfigEntry.unresolvedfullPath).to.eql(['test1', 'test2', 0]);
     expect(newSchemaConfigEntry.type).to.eql({
       value: 'string',
@@ -684,14 +695,14 @@ describe('Utils', () => {
     });
   });
   it('should return complete cloned schema config entry class with simple value and mesages (regExp)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.unresolvedfullPath = ['test1', 'test2', 0];
     schemaConfigEntry.regExp = {
       value: /ab/i,
       message: 'test message',
     };
 
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     expect(newSchemaConfigEntry.unresolvedfullPath).to.eql(['test1', 'test2', 0]);
     expect(newSchemaConfigEntry.regExp).to.eql({
       value: /ab/i,
@@ -699,14 +710,14 @@ describe('Utils', () => {
     });
   });
   it('should return complete cloned schema config entry class with simple value and mesages (validValues)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.unresolvedfullPath = ['test1', 'test2', 0];
     schemaConfigEntry.validValues = {
       value: [1,2,3],
       message: 'test message',
     };
 
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     expect(newSchemaConfigEntry.unresolvedfullPath).to.eql(['test1', 'test2', 0]);
     expect(newSchemaConfigEntry.validValues).to.eql({
       value: [1,2,3],
@@ -714,7 +725,7 @@ describe('Utils', () => {
     });
   });
   it('should return complete cloned schema config entry class with complex value and mesages', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.unresolvedfullPath = ['test1', 'test2', 0];
     schemaConfigEntry.type = {
       value: 'string',
@@ -745,7 +756,7 @@ describe('Utils', () => {
       },
     };
     
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     expect(newSchemaConfigEntry.unresolvedfullPath).to.eql(['test1', 'test2', 0]);
     expect(newSchemaConfigEntry.type).to.eql({
       value: 'string',
@@ -777,7 +788,7 @@ describe('Utils', () => {
     });
   });
   it('should return complete cloned schema config entry class with complex value and mesages (regExp)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.unresolvedfullPath = ['test1', 'test2', 0];
     schemaConfigEntry.regExp = {
       value: /ab/i,
@@ -787,7 +798,7 @@ describe('Utils', () => {
       },
     };
 
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     expect(newSchemaConfigEntry.unresolvedfullPath).to.eql(['test1', 'test2', 0]);
     expect(newSchemaConfigEntry.regExp).to.eql({
       value: /ab/i,
@@ -798,7 +809,7 @@ describe('Utils', () => {
     });
   });
   it('should return complete cloned schema config entry class with complex value and mesages (validValues)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.unresolvedfullPath = ['test1', 'test2', 0];
     schemaConfigEntry.validValues = {
       value: [1,2,3],
@@ -808,7 +819,7 @@ describe('Utils', () => {
       },
     };
 
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     expect(newSchemaConfigEntry.unresolvedfullPath).to.eql(['test1', 'test2', 0]);
     expect(newSchemaConfigEntry.validValues).to.eql({
       value: [1,2,3],
@@ -819,20 +830,20 @@ describe('Utils', () => {
     });
   });
   it('should return cloned schema config entry class (property: type as a string)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.type = 'string';
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     newSchemaConfigEntry.type = 'number';
     expect(schemaConfigEntry.type).to.eql('string');
     expect(newSchemaConfigEntry.type).to.eql('number');
   });
   it('should return cloned schema config entry class (property: type as a type with normal error message)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.type = {
       value: 'string',
       message: 'first error message',
     };
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     newSchemaConfigEntry.type = {
       value: 'number',
       message: 'second error message',
@@ -847,7 +858,7 @@ describe('Utils', () => {
     });
   });
   it('should return cloned schema config entry class (property: type as a type with multi error message)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.type = {
       value: 'string',
       message: {
@@ -855,7 +866,7 @@ describe('Utils', () => {
         en: 'first english error message',
       },
     };
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     newSchemaConfigEntry.type = {
       value: 'number',
       message: {
@@ -879,21 +890,21 @@ describe('Utils', () => {
     });
   });
   it('should return cloned schema config entry class (property: regExp as a regExp)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.regExp = /ab+c/i;
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     newSchemaConfigEntry.regExp = /ab/i;
     expect(schemaConfigEntry.regExp).to.eql(/ab+c/i);
     expect(newSchemaConfigEntry.regExp).to.eql(/ab/i);
   });
   it('should return cloned schema config entry class (property: regExp as a regExp with normal error message)',
      () => {
-       const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+       const schemaConfigEntry = new SchemaConfigEntry();
        schemaConfigEntry.regExp = {
          value: /ab+c/i,
          message: 'first error message',
        };
-       const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+       const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
        newSchemaConfigEntry.regExp = {
          value: /ab/i,
          message: 'second error message',
@@ -909,7 +920,7 @@ describe('Utils', () => {
      });
   it('should return cloned schema config entry class (property: regExp as a regExp with multi error message)',
      () => {
-       const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+       const schemaConfigEntry = new SchemaConfigEntry();
        schemaConfigEntry.regExp = {
          value: /ab+c/i,
          message: {
@@ -917,7 +928,7 @@ describe('Utils', () => {
            en: 'first english error message',
          },
        };
-       const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+       const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
        newSchemaConfigEntry.regExp = {
          value: /ab/i,
          message: {
@@ -941,21 +952,21 @@ describe('Utils', () => {
        });
      });
   it('should return cloned schema config entry class (property: validValues as a string)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.validValues = [1,2];
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     newSchemaConfigEntry.validValues = [3,4];
     expect(schemaConfigEntry.validValues).to.eql([1,2]);
     expect(newSchemaConfigEntry.validValues).to.eql([3,4]);
   });
   it('should return cloned schema config entry (property: validValues as a validValues with normal error message)',
      () => {
-       const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+       const schemaConfigEntry = new SchemaConfigEntry();
        schemaConfigEntry.validValues = {
          value: [1,2],
          message: 'first error message',
        };
-       const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+       const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
        newSchemaConfigEntry.validValues = {
          value: [3,4],
          message: 'second error message',
@@ -971,7 +982,7 @@ describe('Utils', () => {
      });
   it('should return cloned schema config entry (property: validValues as a validValues with multi error message)',
      () => {
-       const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+       const schemaConfigEntry = new SchemaConfigEntry();
        schemaConfigEntry.validValues = {
          value: [1,2],
          message: {
@@ -979,7 +990,7 @@ describe('Utils', () => {
            en: 'first english error message',
          },
        };
-       const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+       const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
        newSchemaConfigEntry.validValues = {
          value: [3,4],
          message: {
@@ -1003,21 +1014,21 @@ describe('Utils', () => {
        });
      });
   it('should return cloned schema config entry class (property: required as a string)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.required = true;
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     newSchemaConfigEntry.required = false;
     expect(schemaConfigEntry.required).to.eql(true);
     expect(newSchemaConfigEntry.required).to.eql(false);
   });
   it('should return cloned schema config entry class (property: required as a required with normal error message)',
      () => {
-       const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+       const schemaConfigEntry = new SchemaConfigEntry();
        schemaConfigEntry.required = {
          value: true,
          message: 'first error message',
        };
-       const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+       const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
        newSchemaConfigEntry.required = {
          value: false,
          message: 'second error message',
@@ -1033,7 +1044,7 @@ describe('Utils', () => {
      });
   it('should return cloned schema config entry class (property: required as a required with multi error message)',
      () => {
-       const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+       const schemaConfigEntry = new SchemaConfigEntry();
        schemaConfigEntry.required = {
          value: true,
          message: {
@@ -1041,7 +1052,7 @@ describe('Utils', () => {
            en: 'first english error message',
          },
        };
-       const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+       const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
        newSchemaConfigEntry.required = {
          value: false,
          message: {
@@ -1065,20 +1076,20 @@ describe('Utils', () => {
        });
      });
   it('should return cloned schema config entry class (property: min as a number)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.min = 1;
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     newSchemaConfigEntry.min = 2;
     expect(schemaConfigEntry.min).to.eql(1);
     expect(newSchemaConfigEntry.min).to.eql(2);
   });
   it('should return cloned schema config entry class (property: min as a min with normal error message)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.min = {
       value: 1,
       message: 'first error message',
     };
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     newSchemaConfigEntry.min = {
       value: 2,
       message: 'second error message',
@@ -1093,7 +1104,7 @@ describe('Utils', () => {
     });
   });
   it('should return cloned schema config entry class (property: min as a min with multi error message)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.min = {
       value: 1,
       message: {
@@ -1101,7 +1112,7 @@ describe('Utils', () => {
         en: 'first english error message',
       },
     };
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     newSchemaConfigEntry.min = {
       value: 2,
       message: {
@@ -1125,20 +1136,20 @@ describe('Utils', () => {
     });
   });
   it('should return cloned schema config entry class (property: max as a number)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.max = 1;
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     newSchemaConfigEntry.max = 2;
     expect(schemaConfigEntry.max).to.eql(1);
     expect(newSchemaConfigEntry.max).to.eql(2);
   });
   it('should return cloned schema config entry class (property: max as a max with normal error message)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.max = {
       value: 1,
       message: 'first error message',
     };
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     newSchemaConfigEntry.max = {
       value: 2,
       message: 'second error message',
@@ -1153,7 +1164,7 @@ describe('Utils', () => {
     });
   });
   it('should return cloned schema config entry class (property: max as a max with multi error message)', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
+    const schemaConfigEntry = new SchemaConfigEntry();
     schemaConfigEntry.max = {
       value: 1,
       message: {
@@ -1161,7 +1172,7 @@ describe('Utils', () => {
         en: 'first english error message',
       },
     };
-    const newSchemaConfigEntry = utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
+    const newSchemaConfigEntry = Utils.cloneSchemaConfigEntryInstance(schemaConfigEntry);
     newSchemaConfigEntry.max = {
       value: 2,
       message: {
@@ -1183,5 +1194,16 @@ describe('Utils', () => {
         en: 'second english error message',
       },
     });
+  });
+  it('should return undefined when it can\'t find value', () => {
+    const variableToValidate = {
+      test1: {
+        test3: {
+          test4: 'test',
+        },
+      },
+    };
+    const path = ['test1', 'test2', 'test3'];
+    expect(Utils.getValue(variableToValidate, path)).to.equal(undefined);
   });
 });

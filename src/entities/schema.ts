@@ -13,29 +13,27 @@ export class Schema {
   private variableToValidate: any;
   parsedVariable: any;
 
-  private utils: Utils;
-
   validationErrorMessages: IError[];
 
   constructor(schemaConfig: ISchemaConfig, options: IOptions = DEFAULT_OPTIONS) {
     this.schemaConfig = schemaConfig;
     const optionsClass = new Options(options);
-    this.utils = new Utils(optionsClass);
+    Utils.options = optionsClass;
     this.schemaConfigValidated = [];
     this.validationErrorMessages = [];
     this.validateSchemaConfig(schemaConfig);
   }
 
   private validateSchemaConfig(schemaConfig: ISchemaConfig) {
-    if (!this.utils.isPlainObject(schemaConfig)) {
+    if (!Utils.isPlainObject(schemaConfig)) {
       throw new Error('schemaConfig needs to be an object');
     }
     this.iterateObject(this.validateSchemaConfigEntry.bind(this));
   }
 
   private validateSchemaConfigEntry(key: string, schemaConfigEntry: ISchemaConfigEntry, unresolvedfullPath: string[]) {
-    const schemaConfigEntryValidated = new SchemaConfigEntry(this.utils, {});
-    if (this.utils.isSchemaConfigEntryNeeded(schemaConfigEntry)) {
+    const schemaConfigEntryValidated = new SchemaConfigEntry();
+    if (Utils.isSchemaConfigEntryNeeded(schemaConfigEntry)) {
       schemaConfigEntryValidated.unresolvedfullPath = unresolvedfullPath;
       schemaConfigEntryValidated.type = schemaConfigEntry.type;
       schemaConfigEntryValidated.regExp = schemaConfigEntry.regExp;
@@ -75,8 +73,8 @@ export class Schema {
     for (let i = 0; i < fullPath.length; i += 1) {
       const pathEntry = fullPath[i];
       const isLastPathEntry = (i === fullPath.length - 1);
-      if (this.utils.isNil(parsedVariable[pathEntry] && !isLastPathEntry)) {
-        const isNextEntryAnArrayInstance = (this.utils.isNumber(fullPath[i + 1]));
+      if (Utils.isNil(parsedVariable[pathEntry] && !isLastPathEntry)) {
+        const isNextEntryAnArrayInstance = (Utils.isNumber(fullPath[i + 1]));
         parsedVariable[pathEntry] =  isNextEntryAnArrayInstance ? [] : {};                   
       }
       if (isLastPathEntry) {
@@ -91,20 +89,20 @@ export class Schema {
     const newSchemaConfigEntries : SchemaConfigEntry[] = this.getSchemaConfigEntriesWithStringPath();
     while (schemaConfigEntriesWithArrayPath.length) {
       const currentSchemaConfigEntry = schemaConfigEntriesWithArrayPath.shift();
-      if (!this.utils.isNil(currentSchemaConfigEntry)) {
-        const currentIndex = this.utils.getFirstIndex(currentSchemaConfigEntry.unresolvedfullPath, '0');
-        const arrayLength = this.utils.getLength({
+      if (!Utils.isNil(currentSchemaConfigEntry)) {
+        const currentIndex = Utils.getFirstIndex(currentSchemaConfigEntry.unresolvedfullPath, '0');
+        const arrayLength = Utils.getLength({
           variableToValidate: this.variableToValidate,
           unresolvedfullPath: currentSchemaConfigEntry.unresolvedfullPath,
           index: currentIndex,
         });
         for (let i = 0; i < arrayLength; i += 1) {
-          const newSchemaConfigEntry = this.utils.getNewSchemaConfigEntry({
+          const newSchemaConfigEntry = Utils.getNewSchemaConfigEntry({
             schemaConfigEntry: currentSchemaConfigEntry,
             index: currentIndex,
             pathEntry: i,
           });
-          if (this.utils.isStringOrNumberArray(newSchemaConfigEntry.unresolvedfullPath)) {
+          if (Utils.isStringOrNumberArray(newSchemaConfigEntry.unresolvedfullPath)) {
             newSchemaConfigEntries.push(newSchemaConfigEntry);
           } else {
             schemaConfigEntriesWithArrayPath.push(newSchemaConfigEntry);
@@ -119,7 +117,7 @@ export class Schema {
     const result : SchemaConfigEntry[] = [];
     for (const schemaConfigEntry of this.schemaConfigValidated) {
       for (const pathEntry of schemaConfigEntry.unresolvedfullPath) {
-        if (!this.utils.isString(pathEntry) && !this.utils.isNumber(pathEntry) && pathEntry.array === true) {
+        if (!Utils.isString(pathEntry) && !Utils.isNumber(pathEntry) && pathEntry.array === true) {
           result.push(schemaConfigEntry);
           break;
         }
@@ -131,7 +129,7 @@ export class Schema {
   private getSchemaConfigEntriesWithStringPath() {
     const result : SchemaConfigEntry[] = [];
     for (const schemaConfigEntry of this.schemaConfigValidated) {
-      if (this.utils.isStringArray(schemaConfigEntry.unresolvedfullPath)) {
+      if (Utils.isStringArray(schemaConfigEntry.unresolvedfullPath)) {
         result.push(schemaConfigEntry);
       }
     }
@@ -153,7 +151,7 @@ export class Schema {
       schemaConfigEntriesWithIndex = this.pushIndexInSchemaConfigEntry(schemaConfigEntriesWithIndex, currentPathIndex);
       // get currentSchemaConfigEntry 
       const currentSchemaConfigEntry = schemaConfigEntriesWithIndex.shift();
-      if (!this.utils.isNil(currentSchemaConfigEntry)) {
+      if (!Utils.isNil(currentSchemaConfigEntry)) {
         // get currentValue
         const [,currentValue] = currentSchemaConfigEntry;
         // get currentKey
@@ -166,11 +164,11 @@ export class Schema {
         // call function
         func(currentKey, currentValue, currentPath.slice());
         // check if nested property of currentValue is set
-        if (!this.utils.isNil(currentValue.nested)) {
+        if (!Utils.isNil(currentValue.nested)) {
           let nested: ISchemaConfig | ISchemaConfig[] = currentValue.nested;
           // if nested property is an array it should set the array property of currentKey to true and it should
           // update the currentPathIndex and currentPath
-          if (this.utils.isArray(currentValue.nested)) {
+          if (Utils.isArray(currentValue.nested)) {
             currentKey = {
               array: true,
             };
