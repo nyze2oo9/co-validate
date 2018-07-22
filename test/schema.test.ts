@@ -1159,11 +1159,12 @@ describe('Validation works', () => {
     
     const objectToValidate = {
       username: 'test',
-      password: 'mySecretPassword',
+      password: 'mySecretPassword1',
     };
     schema.validate(objectToValidate).parse();
+    expect(schema.validationErrorMessages).to.eql([]);
     expect(schema.parsedVariable).to.eql({ 
-      password: 'mySecretPassword',
+      password: 'mySecretPassword1',
     });
   });
   it('should remove unneeded properties and copy the needed ones to parsedVariable', () => {
@@ -1383,6 +1384,26 @@ describe('Validation works', () => {
         message: 'something went wrong',
       },
     ]);
+  });
+  it('shouldn\'t set parsedVariable, because there are validationErrorMessages', () => {
+    const objectDescription: ISchemaConfig =  {
+      test1: {
+        type: 'string',
+      },
+    };
+    const schema = new Schema(objectDescription);
+    
+    const objectToValidate = {
+      test1: 1,
+    };
+    schema.validate(objectToValidate).parse();
+    expect(schema.validationErrorMessages).to.eql([
+      {
+        fullPath: ['test1'],
+        message: 'something went wrong',
+      },
+    ]);
+    expect(schema.parsedVariable).to.eql({});
   });
 });
 

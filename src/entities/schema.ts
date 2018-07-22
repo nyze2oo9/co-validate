@@ -63,8 +63,10 @@ export class Schema {
   }
 
   parse() {
-    for (const schemaConfigEntry of this.schemaConfigValidated) {
-      this.addToParsedVariable(schemaConfigEntry.value, schemaConfigEntry.fullPath);
+    if (this.validationErrorMessages.length === 0) {
+      for (const schemaConfigEntry of this.schemaConfigValidated) {
+        this.addToParsedVariable(schemaConfigEntry.value, schemaConfigEntry.fullPath);
+      }
     }
   }
 
