@@ -303,7 +303,7 @@ const objectToValidate = {
 
 const validationErrorMessages = [
 {
-  fullPath: ['users' '1', 'role'],
+  fullPath: ['users' 1, 'role'],
   message: 'role should be a string'
 };
 ]
