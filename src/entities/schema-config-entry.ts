@@ -6,6 +6,7 @@ import {
 } from './../interfaces/schema';
 import { Utils } from './utils';
 import { IError } from '../interfaces/errors';
+import { DEFAULT_MESSAGE } from '../constants/default';
 
 export class SchemaConfigEntry {
   private utils: Utils;
@@ -383,7 +384,7 @@ export class SchemaConfigEntry {
     return this.utils.isInteger(pathEntry) && !this.utils.isArray(lastValue);
   }
 
-  pushToValidationErrorMessages(fullPath: IFullPath, message = 'something went wrong') {
+  pushToValidationErrorMessages(fullPath: IFullPath, message = DEFAULT_MESSAGE) {
     this._validationErrorMessages.push({
       fullPath,
       message,
@@ -397,7 +398,7 @@ export class SchemaConfigEntry {
     if (!this.utils.isNil(this.message)) {
       return this.checkLanguageErrorMessage(this.message);
     }
-    return 'something went wrong';
+    return DEFAULT_MESSAGE;
   }
 
   checkLanguageErrorMessage(message: message) : string {
@@ -409,6 +410,6 @@ export class SchemaConfigEntry {
     && !this.utils.isNil(message[countryCode])) {
       return message[countryCode];
     }
-    return 'something went wrong';
+    return DEFAULT_MESSAGE;
   }
 }

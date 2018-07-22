@@ -5,3 +5,5 @@ export const DEFAULT_OPTIONS = {
   allowInfinite: false,
   allowEmpty: false,
 };
+
+export const DEFAULT_MESSAGE = 'something went wrong';
