@@ -20,7 +20,7 @@ A library for validating objects.
 
 ## Installation
 
-Soon possible via NPM
+npm install co-validate --save
 
 ## Usage
 
