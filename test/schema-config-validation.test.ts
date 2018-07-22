@@ -10,7 +10,7 @@ describe('Config validation works', () => {
   it('should throw error setting type when valid_values is set', () => {
     const message = 'type and valid_values can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     schemaConfigEntry.validValues = [1, 2];
 
@@ -23,7 +23,7 @@ describe('Config validation works', () => {
   it('should throw error setting type when nested is set', () => {
     const message = 'type and nested can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     schemaConfigEntry.nested = {
       test: {
@@ -40,7 +40,7 @@ describe('Config validation works', () => {
   it('should throw error when setting invalid type', () => {
     const message = 'type is invalid';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     const errorFunction = () => {
       schemaConfigEntry.type = <any>'stirng';
@@ -51,7 +51,7 @@ describe('Config validation works', () => {
   it('should throw error when setting invalid type with error message', () => {
     const message = 'type is invalid';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     const errorFunction = () => {
       schemaConfigEntry.type = {
@@ -67,7 +67,7 @@ describe('Config validation works', () => {
   it('should throw error when setting invalid type with regExp', () => {
     const message = 'RegExp just can be tested on strings';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.regExp = /ab+c/i;
 
     const errorFunction = () => {
@@ -77,7 +77,7 @@ describe('Config validation works', () => {
     expect(errorFunction).to.throw(message);
   });
   it('should set type and typeValue', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.type = {
       value: 'string',
       message: 'error message',
@@ -92,7 +92,7 @@ describe('Config validation works', () => {
   it('should throw error when setting regExp with valid_values', () => {
     const message = 'RegExp pattern and valid_values can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.validValues = [1, 2];
 
     const errorFunction = () => {
@@ -104,7 +104,7 @@ describe('Config validation works', () => {
   it('should throw error when setting regExp with min', () => {
     const message = 'RegExp and length properties can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = 1;
 
     const errorFunction = () => {
@@ -116,7 +116,7 @@ describe('Config validation works', () => {
   it('should throw error when setting regExp with max', () => {
     const message = 'RegExp and length properties can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.max = 1;
 
     const errorFunction = () => {
@@ -128,7 +128,7 @@ describe('Config validation works', () => {
   it('should throw error when setting regExp with length properties', () => {
     const message = 'RegExp and length properties can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = 1;
     schemaConfigEntry.max = 1;
 
@@ -141,7 +141,7 @@ describe('Config validation works', () => {
   it('should throw error when setting regExp with nested property', () => {
     const message = 'RegExp and nested can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.nested = {
       test: {
         type: 'string',
@@ -157,7 +157,7 @@ describe('Config validation works', () => {
   it('should throw error when setting regExp with type property on number', () => {
     const message = 'RegExp just can be tested on strings';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.type = 'number';
 
     const errorFunction = () => {
@@ -169,7 +169,7 @@ describe('Config validation works', () => {
   it('should throw error when setting regExp with type property on number', () => {
     const message = 'RegExp pattern is invalid';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     const errorFunction = () => {
       schemaConfigEntry.regExp = <any>'/ab+c/i';
@@ -178,7 +178,7 @@ describe('Config validation works', () => {
     expect(errorFunction).to.throw(message);
   });
   it('should set regExp and regExpValue', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.regExp = {
       value: /ab+c/i,
       message: 'error message',
@@ -193,7 +193,7 @@ describe('Config validation works', () => {
   it('should throw error when setting validValues with type property', () => {
     const message = 'Valid_values and type can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.type = 'string';
 
     const errorFunction = () => {
@@ -205,7 +205,7 @@ describe('Config validation works', () => {
   it('should throw error when setting validValues with regExp property', () => {
     const message = 'Valid_values and regExp pattern can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.regExp = /ab+c/i;
 
     const errorFunction = () => {
@@ -217,7 +217,7 @@ describe('Config validation works', () => {
   it('should throw error when setting validValues with min property', () => {
     const message = 'Valid_values and length properties can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = 1;
 
     const errorFunction = () => {
@@ -229,7 +229,7 @@ describe('Config validation works', () => {
   it('should throw error when setting validValues with max property', () => {
     const message = 'Valid_values and length properties can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.max = 2;
 
     const errorFunction = () => {
@@ -241,7 +241,7 @@ describe('Config validation works', () => {
   it('should throw error when setting validValues with length properties', () => {
     const message = 'Valid_values and length properties can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = 1;
     schemaConfigEntry.max = 2;
 
@@ -254,7 +254,7 @@ describe('Config validation works', () => {
   it('should throw error when setting validValues with nested property', () => {
     const message = 'Valid_values and nested can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.nested = {
       test: {
         type: 'string',
@@ -270,7 +270,7 @@ describe('Config validation works', () => {
   it('should throw error when setting invalid validValues', () => {
     const message = 'valid_values is invalid';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     const errorFunction = () => {
       schemaConfigEntry.validValues = <any>[1, 2, []];
@@ -281,7 +281,7 @@ describe('Config validation works', () => {
   it('should throw error when setting invalid validValues with error message', () => {
     const message = 'valid_values is invalid';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     const errorFunction = () => {
       schemaConfigEntry.validValues = {
@@ -293,7 +293,7 @@ describe('Config validation works', () => {
     expect(errorFunction).to.throw(message);
   });
   it('should set validValues and ValidValuesValue', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.validValues = {
       value: [1, 2],
       message: 'error message',
@@ -308,7 +308,7 @@ describe('Config validation works', () => {
   it('should throw error when setting invalid required', () => {
     const message = 'required is invalid';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     const errorFunction = () => {
       schemaConfigEntry.required = <any>1;
@@ -319,7 +319,7 @@ describe('Config validation works', () => {
   it('should throw error when setting invalid required', () => {
     const message = 'required is invalid';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     const errorFunction = () => {
       schemaConfigEntry.required = {
@@ -331,7 +331,7 @@ describe('Config validation works', () => {
     expect(errorFunction).to.throw(message);
   });
   it('should set required and requiredValue', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.required = {
       value: true,
       message: 'error message',
@@ -346,7 +346,7 @@ describe('Config validation works', () => {
   it('should throw error when setting min with invalid type', () => {
     const message = 'Invalid type when using length properties';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.type = 'boolean';
 
     const errorFunction = () => {
@@ -358,7 +358,7 @@ describe('Config validation works', () => {
   it('should set min with valid type', () => {
     const message = 'Invalid type when using length properties';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.type = 'string';
     schemaConfigEntry.min = 1;
 
@@ -368,7 +368,7 @@ describe('Config validation works', () => {
   it('should throw error when setting min with regExp pattern', () => {
     const message = 'min and regExp pattern can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.regExp = /ab+c/i;
 
     const errorFunction = () => {
@@ -380,7 +380,7 @@ describe('Config validation works', () => {
   it('should throw error when setting min with validValues', () => {
     const message = 'min and validValues can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.validValues = [1, 2];
 
     const errorFunction = () => {
@@ -392,7 +392,7 @@ describe('Config validation works', () => {
   it('should throw error when setting min with nested', () => {
     const message = 'min and nested can\'t be set both, when nested is an object';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.nested = {
       test: {
         type: 'string',
@@ -406,7 +406,7 @@ describe('Config validation works', () => {
     expect(errorFunction).to.throw(message);
   });
   it('shouldn\'t throw error when setting min with nested array', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.nested = [
       {
         test: {
@@ -428,7 +428,7 @@ describe('Config validation works', () => {
   it('should throw error when setting float min with nested array', () => {
     const message = 'for the current type or if nested is an array min needs to be an integer';
     
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.nested = [
       {
         test: {
@@ -446,7 +446,7 @@ describe('Config validation works', () => {
   it('should throw error when setting float min with wrong type', () => {
     const message = 'for the current type or if nested is an array min needs to be an integer';
     
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.type = 'string';
 
     const errorFunction = () => {
@@ -456,7 +456,7 @@ describe('Config validation works', () => {
     expect(errorFunction).to.throw(message);
   });
   it('shouldn\'t throw error when setting float min with right type', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.type = 'number';
     schemaConfigEntry.min = 1.1;
 
@@ -466,7 +466,7 @@ describe('Config validation works', () => {
   it('should throw error when min isn\'t a number', () => {
     const message = 'min needs to be numbers';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     const errorFunction = () => {
       schemaConfigEntry.min = <any>'test';
@@ -477,7 +477,7 @@ describe('Config validation works', () => {
   it('should throw error when min isn\'t a number', () => {
     const message = 'min needs to be numbers';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     const errorFunction = () => {
       schemaConfigEntry.min = {
@@ -491,7 +491,7 @@ describe('Config validation works', () => {
   it('should throw error when min is higher than max', () => {
     const message = 'min need to be lower than max';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.max = 1;
 
     const errorFunction = () => {
@@ -501,7 +501,7 @@ describe('Config validation works', () => {
     expect(errorFunction).to.throw(message);
   });
   it('should set min and minValue', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = {
       value: 1,
       message: 'error message',
@@ -516,7 +516,7 @@ describe('Config validation works', () => {
   it('should throw error when setting max with invalid type property', () => {
     const message = 'Invalid type when using length properties';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.type = 'boolean';
 
     const errorFunction = () => {
@@ -528,7 +528,7 @@ describe('Config validation works', () => {
   it('should set max with valid type property', () => {
     const message = 'Invalid type when using length properties';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.type = 'number';
     schemaConfigEntry.max = 2;
 
@@ -538,7 +538,7 @@ describe('Config validation works', () => {
   it('should throw error when setting max with regExp pattern', () => {
     const message = 'max and regExp pattern can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.regExp = /ab+c/i;
 
     const errorFunction = () => {
@@ -550,7 +550,7 @@ describe('Config validation works', () => {
   it('should throw error when setting max with validValues', () => {
     const message = 'max and validValues can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.validValues = [1, 2];
 
     const errorFunction = () => {
@@ -562,7 +562,7 @@ describe('Config validation works', () => {
   it('should throw error when setting max with nested, which is an object', () => {
     const message = 'max and nested can\'t be set both, when nested is an object';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.nested = {
       test: {
         type: 'string',
@@ -576,7 +576,7 @@ describe('Config validation works', () => {
     expect(errorFunction).to.throw(message);
   });
   it('shouldn\'t throw error when setting max with nested array', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.nested = [
       {
         test: {
@@ -599,7 +599,7 @@ describe('Config validation works', () => {
   it('should throw error when setting float max with nested array', () => {
     const message = 'for the current type or if nested is an array max needs to be an integer';
     
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.nested = [
       {
         test: {
@@ -617,7 +617,7 @@ describe('Config validation works', () => {
   it('should throw error when setting float max with wrong type', () => {
     const message = 'for the current type or if nested is an array max needs to be an integer';
     
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.type = 'string';
 
     const errorFunction = () => {
@@ -627,7 +627,7 @@ describe('Config validation works', () => {
     expect(errorFunction).to.throw(message);
   });
   it('shouldn\'t throw error when setting float max with right type', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.type = 'number';
     schemaConfigEntry.max = 1.1;
 
@@ -637,7 +637,7 @@ describe('Config validation works', () => {
   it('should throw error when min is higher than max', () => {
     const message = 'min need to be lower than max';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = 2;
 
     const errorFunction = () => {
@@ -649,7 +649,7 @@ describe('Config validation works', () => {
   it('should throw error when max isn\'t a number', () => {
     const message = 'max needs to be numbers';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     const errorFunction = () => {
       schemaConfigEntry.max = {
@@ -661,7 +661,7 @@ describe('Config validation works', () => {
     expect(errorFunction).to.throw(message);
   });
   it('should set max and maxValue', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.max = {
       value: 1,
       message: 'error message',
@@ -676,7 +676,7 @@ describe('Config validation works', () => {
   it('should throw error when message isn\'t a valid string', () => {
     const message = 'message is not a valid message string or message object';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     const errorFunction = () => {
       schemaConfigEntry.message = <any>true;
@@ -687,7 +687,7 @@ describe('Config validation works', () => {
   it('should throw error when message isn\'t a valid string', () => {
     const message = 'message is not a valid message string or message object';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
 
     const errorFunction = () => {
       schemaConfigEntry.message = {
@@ -699,7 +699,7 @@ describe('Config validation works', () => {
     expect(errorFunction).to.throw(message);
   });
   it('should set message', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.message = 'error message';
 
     expect(schemaConfigEntry.message).to.equal('error message');
@@ -707,7 +707,7 @@ describe('Config validation works', () => {
   it('should throw error when setting nested with type', () => {
     const message = 'nested and type can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.type = 'string';
 
     const errorFunction = () => {
@@ -723,7 +723,7 @@ describe('Config validation works', () => {
   it('should throw error when setting nested with regExp', () => {
     const message = 'nested and regExp pattern can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.regExp = /ab+c/i;
 
     const errorFunction = () => {
@@ -739,7 +739,7 @@ describe('Config validation works', () => {
   it('should throw error when setting nested with validValues', () => {
     const message = 'nested and validValues can\'t be set both';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.validValues = [1, 2];
 
     const errorFunction = () => {
@@ -755,7 +755,7 @@ describe('Config validation works', () => {
   it('should throw error when setting nested (which is an object) with min', () => {
     const message = 'nested and length properties can\'t be set both, unless nested is an array';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = 1;
 
     const errorFunction = () => {
@@ -771,7 +771,7 @@ describe('Config validation works', () => {
   it('should throw error when setting nested (which is an object) with max', () => {
     const message = 'nested and length properties can\'t be set both, unless nested is an array';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.max = 1;
 
     const errorFunction = () => {
@@ -787,7 +787,7 @@ describe('Config validation works', () => {
   it('should throw error when setting nested (which is an object) with length properties', () => {
     const message = 'nested and length properties can\'t be set both, unless nested is an array';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = 1;
     schemaConfigEntry.max = 1;
 
@@ -804,7 +804,7 @@ describe('Config validation works', () => {
   it('should throw error, when setting nested array with min which is an float', () => {
     const message = 'If nested is an array, length properties need to be integers';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = 1.5;
 
     const errorFunction = () => {
@@ -822,7 +822,7 @@ describe('Config validation works', () => {
   it('should throw error, when setting nested array with min which is an float', () => {
     const message = 'If nested is an array, length properties need to be integers';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = {
       value: 1.5,
       message: 'validation message',
@@ -843,7 +843,7 @@ describe('Config validation works', () => {
   it('should throw error, when setting nested array with max which is an float', () => {
     const message = 'If nested is an array, length properties need to be integers';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.max = 1.5;
 
     const errorFunction = () => {
@@ -861,7 +861,7 @@ describe('Config validation works', () => {
   it('should throw error, when setting nested array with min which is an float', () => {
     const message = 'If nested is an array, length properties need to be integers';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.max = {
       value: 1.5,
       message: 'validation message',
@@ -882,7 +882,7 @@ describe('Config validation works', () => {
   it('should throw error, when setting nested array with length properties which is an float', () => {
     const message = 'If nested is an array, length properties need to be integers';
 
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = 1.1;
     schemaConfigEntry.max = 1.5;
 
@@ -899,7 +899,7 @@ describe('Config validation works', () => {
     expect(errorFunction).to.throw(message);
   });
   it('should set nested array with min', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = 1;
 
     schemaConfigEntry.nested = [
@@ -920,7 +920,7 @@ describe('Config validation works', () => {
     ]);
   });
   it('should set nested array with max', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.max = 2;
 
     schemaConfigEntry.nested = [
@@ -941,7 +941,7 @@ describe('Config validation works', () => {
     ]);
   });
   it('should set nested array with length properties', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.min = 1;
     schemaConfigEntry.max = 2;
 
@@ -964,7 +964,7 @@ describe('Config validation works', () => {
     ]);
   });
   it('should set nested', () => {
-    const schemaConfigEntry = new SchemaConfigEntry(utils);
+    const schemaConfigEntry = new SchemaConfigEntry(utils, {});
     schemaConfigEntry.nested = {
       test: {
         type: 'string',
@@ -976,5 +976,18 @@ describe('Config validation works', () => {
         type: 'string',
       },
     });
+  });
+  it('should return rest when navigate thru path', () => {
+    const testObject = {
+      test1: {
+        test2: {
+          test3: 'test',
+        },
+      },
+    };
+    const testPath = ['test1', 'test2', 'test3'];
+    const schemaConfigEntry = new SchemaConfigEntry(utils, testObject);
+    schemaConfigEntry.fullPath = testPath;
+    expect(schemaConfigEntry.value).to.equal('test');
   });
 });

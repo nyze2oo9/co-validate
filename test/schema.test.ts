@@ -1359,5 +1359,30 @@ describe('Validation works', () => {
       },
     ]);
   });
+  it('should be aware that value is a string and not an array of objects', () => {
+    const objectDescription: ISchemaConfig =  {
+      test1: {
+        nested: [
+          {
+            test2: {
+              type: 'string',
+            },
+          },
+        ],
+      },
+    };
+    const schema = new Schema(objectDescription);
+    
+    const objectToValidate = {
+      test1: 'test',
+    };
+    schema.validate(objectToValidate).parse();
+    expect(schema.validationErrorMessages).to.eql([
+      {
+        fullPath: ['test1', 0, 'test2'],
+        message: 'something went wrong',
+      },
+    ]);
+  });
 });
 

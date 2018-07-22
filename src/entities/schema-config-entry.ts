@@ -5,16 +5,44 @@ import {
   IMessageEntry, ISchemaConfig, valid_values, type, reg_exp, required, min, max, RegExpValue, ValidValues, SchemaConfigEntryProperty, message, ILength, IUnresolvedFullPath, IFullPath,
 } from './../interfaces/schema';
 import { Utils } from './utils';
+import { IError } from '../interfaces/errors';
 
 export class SchemaConfigEntry {
   private utils: Utils;
 
-  private _fullPath: IUnresolvedFullPath | IFullPath;
-  public get fullPath(): IUnresolvedFullPath | IFullPath {
+  private _variableToValidate : any;
+  public get variableToValidate(): any {
+    return this._variableToValidate;
+  }
+  public set variableToValidate(value: any) {
+    this._variableToValidate = value;
+  }
+
+  private _validationErrorMessages: IError[] = [];
+  public get validationErrorMessages(): IError[] {
+    return this._validationErrorMessages;
+  }
+
+  private _unresolvedfullPath: IUnresolvedFullPath;
+  public get unresolvedfullPath(): IUnresolvedFullPath {
+    return this._unresolvedfullPath;
+  }
+  public set unresolvedfullPath(value: IUnresolvedFullPath) {
+    this._unresolvedfullPath = value;
+  }
+
+  private _fullPath: IFullPath;
+  public get fullPath(): IFullPath {
     return this._fullPath;
   }
-  public set fullPath(value: IUnresolvedFullPath | IFullPath) {
+  public set fullPath(value: IFullPath) {
     this._fullPath = value;
+    this.getValue();
+  }
+
+  private _value: any;
+  public get value(): any {
+    return this._value;
   }
 
   private _type?: type;
@@ -263,8 +291,103 @@ export class SchemaConfigEntry {
     }
   }
 
-  constructor(utils: Utils) {
+  constructor(utils: Utils, variableToValidate: any) {
     this.utils = utils;
+    this.variableToValidate = variableToValidate;
+  }
+
+  validate() {
+    this._validationErrorMessages = [];
+    this.fullPath = <IFullPath>this.unresolvedfullPath;
+    this.validateRequired();
+    if (!this.utils.isNil(this.value)) {
+      this.validateType();
+      this.validateRegExp();
+      this.validateValidValues();
+      this.validateMin();
+      this.validateMax();
+    }
+  }
+
+  validateType() {
+    if (this.typeValue !== undefined) {
+      if (!this.utils.checkType(this.typeValue, this.value)) {
+        const errorMessage = this.getErrorMessage(this.type);
+        this.pushToValidationErrorMessages(this.fullPath, errorMessage);
+      }
+    }
+  }
+
+  validateRegExp() {
+    if (this.regExpValue !== undefined) {
+      if (!this.utils.checkRegExp(this.regExpValue, this.value)) {
+        const errorMessage = this.getErrorMessage(this.regExp);
+        this.pushToValidationErrorMessages(this.fullPath, errorMessage);
+      }
+    }
+  }
+
+  validateValidValues() {
+    if (this.validValuesValue !== undefined) {
+      if (!this.utils.checkValidValue(this.validValuesValue, this.value)) {
+        const errorMessage = this.getErrorMessage(this.validValues);
+        this.pushToValidationErrorMessages(this.fullPath, errorMessage);
+      }
+    }
+  }
+
+  validateRequired() {
+    if (this.requiredValue !== undefined) {
+      if (!this.utils.checkRequired(this.requiredValue, this.value)) {
+        const errorMessage = this.getErrorMessage(this.required);
+        this.pushToValidationErrorMessages(this.fullPath, errorMessage);
+      }
+    }
+  }
+
+  validateMin() {
+    if (this.minValue !== undefined) {
+      if (!this.utils.checkLengthProperty({ min: this.minValue }, this.value)) {
+        const errorMessage = this.getErrorMessage(this.min);
+        this.pushToValidationErrorMessages(this.fullPath, errorMessage);
+      }
+    }
+  }
+
+  validateMax() {
+    if (this.maxValue !== undefined) {
+      if (!this.utils.checkLengthProperty({ max: this.maxValue }, this.value)) {
+        const errorMessage = this.getErrorMessage(this.max);
+        this.pushToValidationErrorMessages(this.fullPath, errorMessage);
+      }
+    }
+  }
+
+  private getValue(): any {
+    let value = this.variableToValidate;
+    let lastValue;
+    for (const pathEntry of this.fullPath) {
+      if (!this.utils.isNil(value)) {
+        value = value[pathEntry];
+        if (this.isArrayDefinedInPathButNotSet(pathEntry, lastValue)) {
+          this.pushToValidationErrorMessages(this.fullPath);
+          return;
+        }
+        lastValue = value;
+      }
+      this._value = value;
+    }
+  }
+
+  isArrayDefinedInPathButNotSet(pathEntry: string | number, lastValue: any) {
+    return this.utils.isInteger(pathEntry) && !this.utils.isArray(lastValue);
+  }
+
+  pushToValidationErrorMessages(fullPath: IFullPath, message = 'something went wrong') {
+    this._validationErrorMessages.push({
+      fullPath,
+      message,
+    });
   }
 
   getErrorMessage(property: SchemaConfigEntryProperty) : string {

@@ -1,5 +1,5 @@
 import { SchemaConfigEntry } from '../entities/schema-config-entry';
-import { IUnresolvedFullPath, ISchemaConfigEntry } from './schema';
+import { IUnresolvedFullPath, ISchemaConfigEntry, IFullPath } from './schema';
 
 export interface IGetNewSchemaConfigEntries {
   schemaConfigEntry: SchemaConfigEntry;
@@ -8,7 +8,7 @@ export interface IGetNewSchemaConfigEntries {
 }
 
 export interface IGetAllLengthsFromEnd {
-  fullPath: IUnresolvedFullPath;
+  unresolvedfullPath: IUnresolvedFullPath;
   index: number;
   variableToValidate: any;
 }

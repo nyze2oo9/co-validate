@@ -23,25 +23,36 @@ export class Utils {
   getNewSchemaConfigEntry(params: IGetNewSchemaConfigEntries): SchemaConfigEntry {
     const { schemaConfigEntry, index, pathEntry } = params;
     const newSchemaConfigEntry = this.cloneSchemaConfigEntryInstance(schemaConfigEntry);
-    newSchemaConfigEntry.fullPath[index] = pathEntry;
+    newSchemaConfigEntry.unresolvedfullPath[index] = pathEntry;
     return newSchemaConfigEntry;
   }
 
   getLength(params: IGetAllLengthsFromEnd): number {
-    const { fullPath, index, variableToValidate } = params;
-    const path = fullPath.slice(0, index);
+    const { unresolvedfullPath, index, variableToValidate } = params;
+    const path = unresolvedfullPath.slice(0, index);
     if (this.isStringOrNumberArray(path)) {
-      const value = this.getValue(path, variableToValidate);
-      if (!this.isNil(value)) {
+      const value = this.getValue(variableToValidate, path);
+      if (!this.isNil(value) && this.isArray(value)) {
         return value.length;
       }
     }
     return 1;
   }
 
-  getFirstIndex(fullPath: IUnresolvedFullPath, entry: string): number {
-    for (let i = 0; i < fullPath.length; i += 1) {
-      const entry = fullPath[i];
+  getValue(variableToValidate: any, path: IFullPath) {
+    let value = variableToValidate;
+    for (const pathEntry of path) {
+      if (this.isNil(value)) {
+        return undefined;
+      }
+      value = value[pathEntry];
+    }
+    return value;
+  }
+
+  getFirstIndex(unresolvedfullPath: IUnresolvedFullPath, entry: string): number {
+    for (let i = 0; i < unresolvedfullPath.length; i += 1) {
+      const entry = unresolvedfullPath[i];
       if (!this.isString(entry) && !this.isNumber(entry) && entry.array === true) {
         return i;
       }
@@ -50,9 +61,9 @@ export class Utils {
   }
 
   cloneSchemaConfigEntryInstance(schemaConfigEntry: SchemaConfigEntry): SchemaConfigEntry {
-    const newSchemaConfigEntry = new SchemaConfigEntry(this);
-    if (!this.isNil(schemaConfigEntry.fullPath)) {
-      newSchemaConfigEntry.fullPath = schemaConfigEntry.fullPath.slice(0);
+    const newSchemaConfigEntry = new SchemaConfigEntry(this, {});
+    if (!this.isNil(schemaConfigEntry.unresolvedfullPath)) {
+      newSchemaConfigEntry.unresolvedfullPath = schemaConfigEntry.unresolvedfullPath.slice(0);
     }
     const keys : CloneSchemaConfigEntryKeys[] = ['type', 'regExp', 'validValues', 'required', 'min', 'max'];
     for (const key of keys) {
@@ -257,22 +268,10 @@ export class Utils {
     return emailRegExp.test(email);
   }
 
-  getValue(path: IFullPath, object: any): any {
-    let value = object;
-    for (const pathEntry of path) {
-      if (!this.isString(pathEntry) && !this.isNumber(pathEntry)) {
-        throw new Error('path should just contain strings or numbers at this point');
-      }
-      if (this.isNil(value)) {
-        return undefined;
-      }
-      value = value[pathEntry];
-    }
-    return value;
-  }
   isMessage(value: any): boolean {
     return this.isString(value) || this.isMessageObject(value);
   }
+
   isMinOrMaxWithSpecificErrorMessage(value: any): boolean {
     if (this.isPlainObject(value)) {
       if (this.isString(value.message)) {
@@ -282,6 +281,7 @@ export class Utils {
     }
     return false;
   }
+
   isValidTypeWithLengthProperties(value: string): boolean {
     const validTypes = ['number', 'integer', 'string', 'boolean[]', 'number[]', 'integer[]',
       'string[]', 'array'];

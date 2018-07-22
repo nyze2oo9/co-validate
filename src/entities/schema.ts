@@ -33,10 +33,10 @@ export class Schema {
     this.iterateObject(this.validateSchemaConfigEntry.bind(this));
   }
 
-  private validateSchemaConfigEntry(key: string, schemaConfigEntry: ISchemaConfigEntry, fullPath: string[]) {
-    const schemaConfigEntryValidated = new SchemaConfigEntry(this.utils);
+  private validateSchemaConfigEntry(key: string, schemaConfigEntry: ISchemaConfigEntry, unresolvedfullPath: string[]) {
+    const schemaConfigEntryValidated = new SchemaConfigEntry(this.utils, {});
     if (this.utils.isSchemaConfigEntryNeeded(schemaConfigEntry)) {
-      schemaConfigEntryValidated.fullPath = fullPath;
+      schemaConfigEntryValidated.unresolvedfullPath = unresolvedfullPath;
       schemaConfigEntryValidated.type = schemaConfigEntry.type;
       schemaConfigEntryValidated.regExp = schemaConfigEntry.regExp;
       schemaConfigEntryValidated.validValues = schemaConfigEntry.validValues;
@@ -49,95 +49,22 @@ export class Schema {
     }
   }
 
-  private validateType(schemaConfigEntry: SchemaConfigEntry, parameter: any) {
-    if (schemaConfigEntry.typeValue !== undefined) {
-      if (!this.utils.checkType(schemaConfigEntry.typeValue, parameter)) {
-        this.validationErrorMessages.push({
-          fullPath: <IFullPath>schemaConfigEntry.fullPath,
-          message: schemaConfigEntry.getErrorMessage(schemaConfigEntry.type),
-        });
-      }
-    }
-  }
-
-  private validateRegExp(schemaConfigEntry: SchemaConfigEntry, parameter: any) {
-    if (schemaConfigEntry.regExpValue !== undefined) {
-      if (!this.utils.checkRegExp(schemaConfigEntry.regExpValue, parameter)) {
-        this.validationErrorMessages.push({
-          fullPath: <IFullPath>schemaConfigEntry.fullPath,
-          message: schemaConfigEntry.getErrorMessage(schemaConfigEntry.regExp),
-        });
-      }
-    }
-  }
-
-  private validateValidValues(schemaConfigEntry: SchemaConfigEntry, parameter: any) {
-    if (schemaConfigEntry.validValuesValue !== undefined) {
-      if (!this.utils.checkValidValue(schemaConfigEntry.validValuesValue, parameter)) {
-        this.validationErrorMessages.push({
-          fullPath: <IFullPath>schemaConfigEntry.fullPath,
-          message: schemaConfigEntry.getErrorMessage(schemaConfigEntry.validValues),
-        });
-      }
-    }
-  }
-
-  private validateRequired(schemaConfigEntry: SchemaConfigEntry, parameter: any) {
-    if (schemaConfigEntry.requiredValue !== undefined) {
-      if (!this.utils.checkRequired(schemaConfigEntry.requiredValue, parameter)) {
-        this.validationErrorMessages.push({
-          fullPath: <IFullPath>schemaConfigEntry.fullPath,
-          message: schemaConfigEntry.getErrorMessage(schemaConfigEntry.required),
-        });
-      }
-    }
-  }
-
-  private validateMin(schemaConfigEntry: SchemaConfigEntry, parameter: any) {
-    if (schemaConfigEntry.minValue !== undefined) {
-      if (!this.utils.checkLengthProperty({ min: schemaConfigEntry.minValue }, parameter)) {
-        this.validationErrorMessages.push({
-          fullPath: <IFullPath>schemaConfigEntry.fullPath,
-          message: schemaConfigEntry.getErrorMessage(schemaConfigEntry.min),
-        });
-      }
-    }
-  }
-
-  private validateMax(schemaConfigEntry: SchemaConfigEntry, parameter: any) {
-    if (schemaConfigEntry.maxValue !== undefined) {
-      if (!this.utils.checkLengthProperty({ max: schemaConfigEntry.maxValue }, parameter)) {
-        this.validationErrorMessages.push({
-          fullPath: <IFullPath>schemaConfigEntry.fullPath,
-          message: schemaConfigEntry.getErrorMessage(schemaConfigEntry.max),
-        });
-      }
-    }
-  }
-
   validate(variableToValidate: any) {
     this.validationErrorMessages = [];
+    this.parsedVariable = {};
     this.variableToValidate = variableToValidate;
     this.schemaConfigValidated = this.fillArrayPaths();
     for (const schemaConfigEntry of this.schemaConfigValidated) {
-      const currentValue = this.utils.getValue((<IFullPath>schemaConfigEntry.fullPath), this.variableToValidate);
-      this.validateRequired(schemaConfigEntry, currentValue);
-      if (!this.utils.isNil(currentValue)) {
-        this.validateType(schemaConfigEntry, currentValue);
-        this.validateRegExp(schemaConfigEntry, currentValue);
-        this.validateValidValues(schemaConfigEntry, currentValue);
-        this.validateMin(schemaConfigEntry, currentValue);
-        this.validateMax(schemaConfigEntry, currentValue);
-      }   
+      schemaConfigEntry.variableToValidate = variableToValidate;
+      schemaConfigEntry.validate();
+      this.validationErrorMessages = this.validationErrorMessages.concat(schemaConfigEntry.validationErrorMessages);
     }
     return this;
   }
 
   parse() {
-    this.parsedVariable = {};
     for (const schemaConfigEntry of this.schemaConfigValidated) {
-      const currentValue = this.utils.getValue((<IFullPath>schemaConfigEntry.fullPath), this.variableToValidate);
-      this.addToParsedVariable(currentValue, <IFullPath>schemaConfigEntry.fullPath);
+      this.addToParsedVariable(schemaConfigEntry.value, schemaConfigEntry.fullPath);
     }
   }
 
@@ -163,10 +90,10 @@ export class Schema {
     while (schemaConfigEntriesWithArrayPath.length) {
       const currentSchemaConfigEntry = schemaConfigEntriesWithArrayPath.shift();
       if (!this.utils.isNil(currentSchemaConfigEntry)) {
-        const currentIndex = this.utils.getFirstIndex(currentSchemaConfigEntry.fullPath, '0');
+        const currentIndex = this.utils.getFirstIndex(currentSchemaConfigEntry.unresolvedfullPath, '0');
         const arrayLength = this.utils.getLength({
           variableToValidate: this.variableToValidate,
-          fullPath: currentSchemaConfigEntry.fullPath,
+          unresolvedfullPath: currentSchemaConfigEntry.unresolvedfullPath,
           index: currentIndex,
         });
         for (let i = 0; i < arrayLength; i += 1) {
@@ -175,7 +102,7 @@ export class Schema {
             index: currentIndex,
             pathEntry: i,
           });
-          if (this.utils.isStringOrNumberArray(newSchemaConfigEntry.fullPath)) {
+          if (this.utils.isStringOrNumberArray(newSchemaConfigEntry.unresolvedfullPath)) {
             newSchemaConfigEntries.push(newSchemaConfigEntry);
           } else {
             schemaConfigEntriesWithArrayPath.push(newSchemaConfigEntry);
@@ -189,7 +116,7 @@ export class Schema {
   private getSchemaConfigEntriesWithArrayPath() {
     const result : SchemaConfigEntry[] = [];
     for (const schemaConfigEntry of this.schemaConfigValidated) {
-      for (const pathEntry of schemaConfigEntry.fullPath) {
+      for (const pathEntry of schemaConfigEntry.unresolvedfullPath) {
         if (!this.utils.isString(pathEntry) && !this.utils.isNumber(pathEntry) && pathEntry.array === true) {
           result.push(schemaConfigEntry);
           break;
@@ -202,7 +129,7 @@ export class Schema {
   private getSchemaConfigEntriesWithStringPath() {
     const result : SchemaConfigEntry[] = [];
     for (const schemaConfigEntry of this.schemaConfigValidated) {
-      if (this.utils.isStringArray(schemaConfigEntry.fullPath)) {
+      if (this.utils.isStringArray(schemaConfigEntry.unresolvedfullPath)) {
         result.push(schemaConfigEntry);
       }
     }
