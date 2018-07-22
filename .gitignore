@@ -60,3 +60,4 @@ internal/
 yarn.lock
 .parallelperf.*
 dist
+.nyc_output

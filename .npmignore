@@ -1,2 +1,8 @@
 tsconfig.json
 src
+coverage
+test
+.travis.yml
+.idea
+.nyc_output
+.vscode
